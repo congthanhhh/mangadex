@@ -1,6 +1,6 @@
 import { Layout } from "antd"
 import NavHeader from "./NavHeader"
-import CardItem from "../manga/CardItem"
+import CardMain from "../manga/CardMain"
 const { Footer, Content } = Layout
 const Home = () => {
   return (
@@ -8,8 +8,8 @@ const Home = () => {
       <div className="">
         <Layout >
           <header><NavHeader /></header>
-          <div className="max-w-7xl m-auto">
-            <Content className=""><CardItem /></Content>
+          <div className="max-w-screen-xl m-auto">
+            <Content className=""><CardMain /></Content>
           </div>
           <Footer className="bg-red-400">footer</Footer>
         </Layout>

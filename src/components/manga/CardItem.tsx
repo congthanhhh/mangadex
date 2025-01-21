@@ -1,69 +1,89 @@
-import { useState, useEffect } from "react";
-import { Card, Col, Row } from "antd";
-import PaginationManga from "../pagination/PaginationManga";
-const { Meta } = Card;
+import { Card, Row, Col, Button, Flex, Tag } from 'antd'
+import { assets } from '../../assets/assets'
+import { EyeOutlined, UsergroupAddOutlined, StarFilled, TagOutlined } from "@ant-design/icons";
+
 interface IManga {
-    id: number;
     title: string;
+    body: string;
+}
+interface CardItemProps {
+    manga: IManga[];
+    loading: boolean;
+}
+const CardItem = (props: CardItemProps) => {
+    const { manga, loading } = props;
+    return (
+        <>
+            <Row >
+                {
+                    manga.map((item, index) => (
+                        <Col lg={12} key={index}>
+                            <div className='p-3'>
+                                <Card loading={loading}
+                                    hoverable
+                                    style={{ height: 180 }}
+                                    styles={{ body: { padding: 0, overflow: 'hidden' } }}>
+                                    <Flex >
+                                        <img className='rounded-md'
+                                            alt="avatar"
+                                            src={assets.mangaImg}
+                                            style={{
+                                                display: 'block',
+                                                width: 130,
+                                                height: 180,
+                                            }}
+                                        />
+                                        <Flex vertical align="flex-end" style={{ padding: 12, position: 'relative' }}>
+                                            <div className='flex items-center w-full justify-between text-[12px] font-sans'>
+                                                <div className='font-medium leading-5 tracking-wide text-[#757575]'>300 chương</div>
+                                                <div className='flex items-center gap-3 text-[#757575]'>
+                                                    <div>
+                                                        <span><StarFilled style={{ color: '#fd3' }} /></span>
+                                                        <span className='font-medium leading-5 tracking-wide pl-1'>5</span>
+                                                    </div>
+                                                    <div>
+                                                        <span><EyeOutlined /></span>
+                                                        <span className='font-medium leading-5 tracking-wide pl-1'>20,500,000</span>
+                                                    </div>
+                                                    <div>
+                                                        <span><UsergroupAddOutlined /></span>
+                                                        <span className='font-medium leading-5 tracking-wide pl-1'>40,000</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className='w-full'>
+                                                <a href="#" className='text-black line-clamp-1 text-base font-medium hover:text-red-700'>
+                                                    {item.title}
+                                                </a>
+                                            </div>
+                                            <div className='w-full my-1'>
+                                                <Tag icon={<TagOutlined />} className='bg-slate-300 hover:opacity-50 rounded-lg text-[10px] font-medium'>
+                                                    <a href="#">Hành Động</a>
+                                                </Tag>
+                                                <Tag icon={<TagOutlined />} className='bg-slate-300 hover:opacity-50 rounded-lg text-[10px] font-medium'>
+                                                    <a href="#">Hành Động</a>
+                                                </Tag>
+                                            </div>
+                                            <div>
+                                                <span className='text-[12px] line-clamp-3 font-sans leading-4 tracking-wide'>
+                                                    {item.body}
+                                                </span>
+                                            </div>
+                                            <div className='absolute bottom-2 left-2'>
+                                                <Button href='#' className='font-sans' color='danger' variant='text'>
+                                                    ĐỌC TRUYỆN
+                                                </Button>
+                                            </div>
+                                        </Flex>
+                                    </Flex>
+                                </Card>
+                            </div>
+                        </Col>
+                    ))
+                }
+            </Row>
+        </>
+    )
 }
 
-const CardItem = () => {
-    const [manga, setManga] = useState<IManga[]>([]);
-    const [totalPages, setTotalPages] = useState(0);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [loading, setLoading] = useState(false);
-    const pageSize = 12;
-
-    const fetchManga = async (page: number, pageSize: number) => {
-        setLoading(true);
-        try {
-            const res = await fetch(`https://jsonplaceholder.typicode.com/posts?_page=${page}&_limit=${pageSize}`);
-            const data = await res.json();
-            const total = res.headers.get("X-Total-Count");
-            setManga(data);
-            setTotalPages(Number(total));
-        } catch (error) {
-            console.error("Error fetching data:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchManga(currentPage, pageSize);
-    }, [currentPage]);
-
-    const handlePageChange = (page: number) => {
-        setCurrentPage(page);
-    };
-
-    return (
-        <div>
-            <Row gutter={12}>
-                {manga.map((item) => (
-                    <Col xs={12} sm={8} md={6} lg={4} key={item.id} >
-                        <div className="pt-3">
-                            <Card
-                                loading={loading}
-                                hoverable
-                                cover={<img alt="example" src="https://preview.redd.it/nano-machine-will-cheon-won-still-use-nano-after-become-v0-xkhr9w5isapc1.jpeg?auto=webp&s=9dbb42d6330b79a8ca1276aac4b9726d0d2bc78a" />}
-                            >
-                                <Meta title={item.title} description="www.instagram.com" />
-                            </Card>
-                        </div>
-                    </Col>
-                ))}
-
-            </Row>
-
-            <PaginationManga
-                totalPages={totalPages}
-                postsPerPage={pageSize}
-                currentPage={currentPage}
-                handlePageChange={handlePageChange}
-            />
-        </div>
-    );
-};
-
-export default CardItem;
+export default CardItem
