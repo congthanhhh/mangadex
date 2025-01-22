@@ -1,9 +1,4 @@
 import { useState } from 'react'
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
-import Card from 'react-bootstrap/Card';
-import ListGroup from 'react-bootstrap/ListGroup';
 
 const Search = () => {
     const [value, setValue] = useState<string>('');
