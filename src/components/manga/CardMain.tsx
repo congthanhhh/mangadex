@@ -108,7 +108,7 @@ const CardMain = () => {
             </div>
 
             <CardProposal />
-            <CardNew />
+            {/* <CardNew /> */}
         </div>
     );
 };
