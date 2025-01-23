@@ -1,13 +1,9 @@
 import Home from "./components/layout/Home"
-
-
 function App() {
 
   return (
     <>
-      <div>
-        <Home />
-      </div>
+      <Home />
     </>
   )
 }

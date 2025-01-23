@@ -1,15 +1,18 @@
 import { MenuOutlined, SearchOutlined, UserOutlined } from "@ant-design/icons";
 import { Button } from "antd";
 import { useState } from "react";
+import { Link, useLocation } from 'react-router-dom';
 function NavHeader() {
-    let Links = [
-        { name: "TRANG CHỦ", link: "/" },
-        { name: "DANH SÁCH", link: "/" },
-        { name: "LIÊN HỆ", link: "/" },
+    const [open, setOpen] = useState(false);
+
+    const Links = [
+        { name: 'Trang chủ', link: '/trang-chu' },
+        { name: 'Danh sách', link: '/danh-sach' },
+        { name: 'Liên hệ', link: '/lien-he' },
     ];
-    let [open, setOpen] = useState(false);
+
     return (
-        <div className='shadow-md w-full bg-white top-0 left-0'>
+        <div className='shadow-md w-full bg-white top-0 left-0 mb-1'>
             <div className="max-w-screen-xl m-auto">
                 <div className='md:flex items-center py-4 md:px-1 px-7'>
                     <div className='font-bold text-2xl cursor-pointer flex items-center justify-center text-gray-800'>
@@ -44,8 +47,9 @@ function NavHeader() {
                     w-full md:w-auto md:pl-0 pl-9 transition-all duration-500 ease-in ${open ? 'top-16 ' : 'top-[-490px]'}`}>
                         {
                             Links.map((link) => (
-                                <li key={link.name} className='md:ml-8 text-xl md:my-0 my-7'>
-                                    <a href={link.link} className='text-gray-800 hover:text-gray-400 duration-500'>{link.name}</a>
+                                <li key={link.name} className='md:ml-8 md:my-0 my-7 text-sm flex flex-col items-center'>
+                                    <Link to={link.link} className='uppercase font-sans font-medium text-gray-800 hover:text-gray-400 duration-500'>{link.name}</Link>
+                                    <hr className=" relative top-2 w-1/2 h-1 bg-blue-500 rounded" />
                                 </li>
                             ))
                         }

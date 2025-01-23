@@ -5,6 +5,7 @@ import { CodepenCircleOutlined, EyeOutlined, UsergroupAddOutlined } from "@ant-d
 import { assets } from '../../assets/assets'
 import CardNew from "./CardNew";
 import CardProposal from "./CardProposal";
+import CarouselItem from "./CarouselItem";
 interface IManga {
     id: number;
     title: string;
@@ -41,7 +42,12 @@ const CardMain = () => {
     };
 
     return (
-        <div className="">
+        <>
+            <CarouselItem />
+            <div className='pr-3 flex items-center'>
+                <div className='uppercase h-9 min-w-16 px-4 pt-1 text-xl font-medium'>Truyện mới</div>
+                <hr className="block flex-1 border border-gray-30 border-opacity-30 border-solid transition max-w-full" />
+            </div>
             <Row gutter={10}>
                 {manga.map((item) => (
                     <Col xs={12} sm={8} md={6} lg={4} key={item.id} >
@@ -109,7 +115,7 @@ const CardMain = () => {
 
             <CardProposal />
             {/* <CardNew /> */}
-        </div>
+        </>
     );
 };
 
