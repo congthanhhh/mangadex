@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Card, Col, Row } from "antd";
+import { Card, Col, Row, Tooltip } from "antd";
 import PaginationManga from "../pagination/PaginationManga";
 import { CodepenCircleOutlined, EyeOutlined, UsergroupAddOutlined } from "@ant-design/icons";
 import { assets } from '../../assets/assets'
@@ -65,15 +65,18 @@ const CardMain = () => {
                                                     1,180
                                                 </span>
                                             </div>
-                                        </div>}>
+                                        </div>
+                                    }>
                                     <Card.Meta
                                         style={{
                                             lineHeight: '16px',
                                         }}
                                         title={
-                                            <a className="h-8 text-wrap line-clamp-2 hover:text-red-700">
-                                                <span>{item.title}</span>
-                                            </a>
+                                            <Tooltip title={item.title} arrow={false}>
+                                                <a className="h-8 text-wrap line-clamp-2 hover:text-red-700">
+                                                    <span>{item.title}</span>
+                                                </a>
+                                            </Tooltip>
                                         }
                                         description={
                                             <div className="relative">
@@ -88,8 +91,8 @@ const CardMain = () => {
                                                 <a className="text-sm text-gray-500 flex items-center hover:text-red-700">
                                                     <div className="z-[1]"><CodepenCircleOutlined style={{ fontSize: '20px' }} /></div>
                                                     <div className="flex flex-col pl-3 pb-2">
-                                                        <span className="text-sm font-medium">21</span>
-                                                        <span className="text-xs">1 giờ trước</span>
+                                                        <span className="text-sm font-medium">20</span>
+                                                        <span className="text-xs">2 giờ trước</span>
                                                     </div>
                                                 </a>
 

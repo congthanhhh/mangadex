@@ -1,4 +1,4 @@
-import { Card, Row, Col, Button, Flex, Tag } from 'antd'
+import { Card, Row, Col, Button, Flex, Tag, Tooltip } from 'antd'
 import { assets } from '../../assets/assets'
 import { EyeOutlined, UsergroupAddOutlined, StarFilled, TagOutlined } from "@ant-design/icons";
 
@@ -52,9 +52,11 @@ const CardItem = (props: CardItemProps) => {
                                                 </div>
                                             </div>
                                             <div className='w-full'>
-                                                <a href="#" className='text-black line-clamp-1 text-base font-medium hover:text-red-700'>
-                                                    {item.title}
-                                                </a>
+                                                <Tooltip title={item.title} arrow={false}>
+                                                    <a href="#" className='text-black line-clamp-1 text-base font-medium hover:text-red-700'>
+                                                        {item.title}
+                                                    </a>
+                                                </Tooltip>
                                             </div>
                                             <div className='w-full my-1'>
                                                 <Tag icon={<TagOutlined />} className='bg-slate-300 hover:opacity-50 rounded-lg text-[10px] font-medium'>
@@ -65,9 +67,11 @@ const CardItem = (props: CardItemProps) => {
                                                 </Tag>
                                             </div>
                                             <div>
-                                                <span className='text-[12px] line-clamp-3 font-sans leading-4 tracking-wide'>
-                                                    {item.body}
-                                                </span>
+                                                <Tooltip title={item.body} arrow={false}>
+                                                    <span className='text-[12px] line-clamp-3 font-sans leading-4 tracking-wide'>
+                                                        {item.body}
+                                                    </span>
+                                                </Tooltip>
                                             </div>
                                             <div className='absolute bottom-2 left-2'>
                                                 <Button href='#' className='font-sans' color='danger' variant='text'>

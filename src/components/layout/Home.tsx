@@ -11,8 +11,8 @@ const Home = () => {
           <Content className="">
             <AppRouter />
           </Content>
-          <Footer className="bg-red-400">footer</Footer>
         </Layout>
+        <Footer className="bg-red-400">footer</Footer>
       </div>
     </>
   )

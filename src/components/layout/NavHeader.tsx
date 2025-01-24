@@ -1,9 +1,10 @@
 import { MenuOutlined, SearchOutlined, UserOutlined } from "@ant-design/icons";
 import { Button } from "antd";
 import { useState } from "react";
-import { Link, useLocation } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 function NavHeader() {
     const [open, setOpen] = useState(false);
+    const location = useLocation();
 
     const Links = [
         { name: 'Trang chủ', link: '/trang-chu' },
@@ -46,10 +47,18 @@ function NavHeader() {
                     <ul className={`md:flex md:items-center md:pb-0 pb-12 absolute md:static bg-white md:z-auto z-10 left-0 
                     w-full md:w-auto md:pl-0 pl-9 transition-all duration-500 ease-in ${open ? 'top-16 ' : 'top-[-490px]'}`}>
                         {
-                            Links.map((link) => (
-                                <li key={link.name} className='md:ml-8 md:my-0 my-7 text-sm flex flex-col items-center'>
-                                    <Link to={link.link} className='uppercase font-sans font-medium text-gray-800 hover:text-gray-400 duration-500'>{link.name}</Link>
-                                    <hr className=" relative top-2 w-1/2 h-1 bg-blue-500 rounded" />
+                            Links.map((item) => (
+                                <li key={item.name}
+                                    className='md:ml-8 md:my-0 my-7 text-sm flex flex-col items-center'>
+                                    <NavLink to={item.link}
+                                        className={`${location.pathname === item.link ? 'text-slate-700' : 'text-gray-500'}
+                                        uppercase font-sans font-medium text-gray-500 hover:text-gray-400 duration-500`}>
+                                        {item.name}
+                                    </NavLink>
+                                    <div
+                                        className={`relative top-2 w-1/2 h-1 rounded transition-all duration-500 ease-in-out 
+                                            ${location.pathname === item.link ? 'bg-blue-500 scale-x-100' : 'bg-transparent scale-x-0'}`}
+                                    />
                                 </li>
                             ))
                         }
