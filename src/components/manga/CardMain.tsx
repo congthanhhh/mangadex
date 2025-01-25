@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Card, Col, Row, Tooltip } from "antd";
 import PaginationManga from "../pagination/PaginationManga";
 import { CodepenCircleOutlined, EyeOutlined, UsergroupAddOutlined } from "@ant-design/icons";
-import { assets } from '../../assets/assets'
+import { assets } from '../../assets/assets';
 import CardNew from "./CardNew";
 import CardProposal from "./CardProposal";
 import CarouselItem from "./CarouselItem";

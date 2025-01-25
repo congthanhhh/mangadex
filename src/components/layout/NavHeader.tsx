@@ -2,9 +2,32 @@ import { MenuOutlined, SearchOutlined, UserOutlined } from "@ant-design/icons";
 import { Button } from "antd";
 import { useState } from "react";
 import { NavLink, useLocation } from 'react-router-dom';
+import UserInfo from "../modalManga/userInfo";
+import Search from "../modalManga/Search";
 function NavHeader() {
     const [open, setOpen] = useState(false);
     const location = useLocation();
+    const [isOpenUserInfo, setIsOpenUserInfo] = useState(false);
+    const [isOpenSearch, setIsOpenSearch] = useState(false);
+
+    const showModal = () => {
+        setIsOpenUserInfo(true)
+    }
+    const handleOk = () => {
+        setIsOpenUserInfo(false)
+    }
+    const handleCancel = () => {
+        setIsOpenUserInfo(false)
+    }
+    const showModalSearch = () => {
+        setIsOpenSearch(true)
+    }
+    const handleOkSearch = () => {
+        setIsOpenSearch(false)
+    }
+    const handleCancelSearch = () => {
+        setIsOpenSearch(false)
+    }
 
     const Links = [
         { name: 'Trang chủ', link: '/trang-chu' },
@@ -27,6 +50,7 @@ function NavHeader() {
                     </div>
                     <div className='text-3xl absolute xl:right-36 top-4 cursor-pointer right-0 sm:right-0'>
                         <Button
+                            onClick={showModalSearch}
                             style={{ fontSize: 22, marginRight: 12 }}
                             size="large"
                             shape="circle"
@@ -35,6 +59,7 @@ function NavHeader() {
                             icon={<SearchOutlined name={open ? 'close' : 'menu'} />}
                         />
                         <Button
+                            onClick={showModal}
                             style={{ fontSize: 22, marginRight: 12 }}
                             size="large"
                             shape="circle"
@@ -65,7 +90,18 @@ function NavHeader() {
                     </ul>
                 </div>
             </div>
+
+            <UserInfo
+                isOpenUserInfo={isOpenUserInfo}
+                handleOk={handleOk}
+                handleCancel={handleCancel} />
+
+            <Search
+                isOpenSearch={isOpenSearch}
+                handleOk={handleOkSearch}
+                handleCancel={handleCancelSearch} />
         </div>
+
     )
 }
 

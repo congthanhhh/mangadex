@@ -1,16 +1,6 @@
-import { Carousel, Col, Row } from "antd"
-
+import { Carousel } from "antd"
 import { assets } from '../../assets/assets'
-import { useEffect, useRef, useState } from "react";
 const CarouselItem = () => {
-    const contentStyle: React.CSSProperties = {
-        height: '160px',
-        color: '#fff',
-        lineHeight: '160px',
-        textAlign: 'center',
-        background: '#364d79',
-
-    };
     return (
         <>
             <div className="w-full my-4">
