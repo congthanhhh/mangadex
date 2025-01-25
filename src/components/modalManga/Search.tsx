@@ -8,13 +8,11 @@ interface IManga {
 }
 interface ModelSearchProps {
     isOpenSearch: boolean;
-    handleOk: () => void;
     handleCancel: () => void;
 }
 const Search = (props: ModelSearchProps) => {
     const { isOpenSearch, handleCancel } = props;
     const [search, setSearch] = useState('');
-    const [loading, setLoading] = useState(false);
     const [result, setResult] = useState<IManga[]>([])
 
     const mangaData = async (value: string) => {
@@ -22,8 +20,6 @@ const Search = (props: ModelSearchProps) => {
             setResult([]);
             return;
         }
-
-        setLoading(true)
         try {
             const res = await fetch(`https://jsonplaceholder.typicode.com/posts`);
             const data: IManga[] = await res.json();
@@ -33,8 +29,6 @@ const Search = (props: ModelSearchProps) => {
             setResult(searchResult);
         } catch (error) {
             console.error("Error fetching data:", error);
-        } finally {
-            setLoading(false);
         }
     }
 

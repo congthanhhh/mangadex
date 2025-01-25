@@ -16,7 +16,7 @@ const CardMain = () => {
     const [totalPages, setTotalPages] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
     const [loading, setLoading] = useState(false);
-    const pageSize = 6;
+    const pageSize = 30;
 
     const fetchManga = async (page: number, pageSize: number) => {
         setLoading(true);
@@ -117,7 +117,7 @@ const CardMain = () => {
             </div>
 
             <CardProposal />
-            {/* <CardNew /> */}
+            <CardNew />
         </>
     );
 };
