@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Card, Col, Row, Tooltip } from "antd";
 import PaginationManga from "../pagination/PaginationManga";
-import { CodepenCircleOutlined, EyeOutlined, UsergroupAddOutlined } from "@ant-design/icons";
+import { CodepenCircleOutlined, EyeFilled, UsergroupAddOutlined } from "@ant-design/icons";
 import { assets } from '../../assets/assets';
 import CardNew from "./CardNew";
 import CardProposal from "./CardProposal";
@@ -59,7 +59,7 @@ const CardMain = () => {
                                             <img className="h-[250px] w-full rounded-t-lg" src={assets.mangaImg2} />
                                             <div className="absolute bottom-0 w-full h-5">
                                                 <span className="w-auto font-medium px-[2px] text-xs font-sans h-full text-white flex items-center bg-black opacity-50 rounded-b-sm">
-                                                    <EyeOutlined className="mx-2 fill-white" style={{ fontSize: '15px' }} />
+                                                    <EyeFilled className="mx-2 fill-white" style={{ fontSize: '15px' }} />
                                                     1,280,000
                                                     <UsergroupAddOutlined className="mx-2 fill-white" style={{ fontSize: '15px' }} />
                                                     1,180
