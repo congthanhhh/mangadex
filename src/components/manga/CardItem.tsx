@@ -59,10 +59,10 @@ const CardItem = (props: CardItemProps) => {
                                                 </Tooltip>
                                             </div>
                                             <div className='w-full my-1'>
-                                                <Tag icon={<TagOutlined />} className='bg-slate-300 hover:opacity-50 rounded-lg text-[10px] font-medium'>
+                                                <Tag icon={<TagOutlined />} className='bg-slate-300 hover:opacity-50 rounded-xl text-[10px] font-medium'>
                                                     <a href="#">Hành Động</a>
                                                 </Tag>
-                                                <Tag icon={<TagOutlined />} className='bg-slate-300 hover:opacity-50 rounded-lg text-[10px] font-medium'>
+                                                <Tag icon={<TagOutlined />} className='bg-slate-300 hover:opacity-50 rounded-xl text-[10px] font-medium'>
                                                     <a href="#">Hành Động</a>
                                                 </Tag>
                                             </div>

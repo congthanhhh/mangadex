@@ -6,6 +6,7 @@ import { assets } from '../../assets/assets';
 import CardNew from "./CardNew";
 import CardProposal from "./CardProposal";
 import CarouselItem from "./CarouselItem";
+import { useNavigate } from "react-router-dom";
 interface IManga {
     id: number;
     title: string;
@@ -17,6 +18,8 @@ const CardMain = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [loading, setLoading] = useState(false);
     const pageSize = 30;
+
+    const navigate = useNavigate();
 
     const fetchManga = async (page: number, pageSize: number) => {
         setLoading(true);
@@ -55,7 +58,7 @@ const CardMain = () => {
                             <div className="">
                                 <Card loading={loading} hoverable size="small"
                                     cover={
-                                        <div className="relative">
+                                        <div onClick={() => navigate(`/truyen/${item.id}`)} className="relative">
                                             <img className="h-[250px] w-full rounded-t-lg" src={assets.mangaImg2} />
                                             <div className="absolute bottom-0 w-full h-5">
                                                 <span className="w-auto font-medium px-[2px] text-xs font-sans h-full text-white flex items-center bg-black opacity-50 rounded-b-sm">
@@ -73,7 +76,7 @@ const CardMain = () => {
                                         }}
                                         title={
                                             <Tooltip title={item.title} arrow={false}>
-                                                <a className="h-8 text-wrap line-clamp-2 hover:text-red-700">
+                                                <a onClick={() => navigate(`/truyen/${item.id}`)} className="h-8 text-wrap line-clamp-2 hover:text-red-700">
                                                     <span>{item.title}</span>
                                                 </a>
                                             </Tooltip>
