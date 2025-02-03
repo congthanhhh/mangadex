@@ -4,10 +4,15 @@ import { UsergroupAddOutlined, StarFilled, EyeFilled, HeartFilled, BellFilled, T
 import { assets } from '../../assets/assets';
 import { useParams } from "react-router-dom";
 import ShowMoreLess from "./ShowMoreLess";
+import Comment from "./Comment";
 
 const CardDetail = () => {
     const [manga, setManga] = useState([]);
+    const [comment, setComment] = useState([]);
+    const [replyComment, setReplyComment] = useState([]);
     const LIMIT_MANGA = 21;
+    const LIMIT_COMMENT = 10;
+    const LIMIT_REPCOMMENT = 4;
 
     const { id } = useParams();
 
@@ -20,9 +25,29 @@ const CardDetail = () => {
             console.error("Error fetching data:", error);
         }
     };
+    const fetchComment = async () => {
+        try {
+            const res = await fetch(`https://jsonplaceholder.typicode.com/posts`);
+            const data = await res.json();
+            setComment(data)
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    };
+    const fetchReplyComment = async () => {
+        try {
+            const res = await fetch(`https://jsonplaceholder.typicode.com/users`);
+            const data = await res.json();
+            setReplyComment(data)
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    };
 
     useEffect(() => {
         fetchDetail();
+        fetchComment();
+        fetchReplyComment();
     }, [])
 
     return (
@@ -30,7 +55,7 @@ const CardDetail = () => {
             <div>
                 ID Manga: {id}
             </div>
-            <div className="w-full mb-5">
+            <div className="w-full mb-2">
                 <Row>
                     <Col lg={7} xs={24} className="p-3">
                         <div>
@@ -158,8 +183,8 @@ const CardDetail = () => {
                                             <ShowMoreLess
                                                 data={manga}
                                                 initialVisible={LIMIT_MANGA}
-                                                // incremental={true}
-                                                // step={10}
+                                                className="pt-2 w-full"
+                                                buttonClassName="w-full h-11 rounded-md text-sm px-4 border-2"
 
                                                 renderItem={(item) => (
                                                     <Col lg={8} md={8} sm={12} xs={24} key={item.id} className="p-2 py-1 cursor-pointer">
@@ -192,6 +217,12 @@ const CardDetail = () => {
                         </div>
                     </Col>
                 </Row>
+                <Comment
+                    dataComment={comment}
+                    dataReply={replyComment}
+                    LIMIT_COMMENT={LIMIT_COMMENT}
+                    LIMIT_REPCOMMENT={LIMIT_REPCOMMENT}
+                />
             </div>
 
         </div>
