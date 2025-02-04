@@ -35,7 +35,7 @@ function NavHeader() {
                 <div className='md:flex items-center py-4 md:px-1 px-7'>
                     <div className='font-bold text-2xl cursor-pointer flex items-center justify-center text-gray-800'>
                         <span className='text-3xl text-indigo-600 mr-1'>
-                            <a href="/home">MANGA</a>
+                            <NavLink to={'/trang-chu'}>MANGA</NavLink>
                         </span>
                     </div>
 

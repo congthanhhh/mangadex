@@ -46,14 +46,14 @@ const Comment = (props: CommentProps) => {
         <div className="bg-neutral-200 font-sans rounded-md">
             <div className="px-4 mt-5 pb-2">
                 <p className="text-2xl py-3">BÌNH LUẬN</p>
-                <div className="relative">
+                <div className="relative px-4">
                     <TextArea size="large"
                         autoSize={{ minRows: 2, maxRows: 3 }}
                         styles={{ textarea: { paddingRight: 90 } }}
                         placeholder="Người tiện tay vẽ hoa vẽ lá, Tôi đa tình tưởng đó là mùa xuân..." />
                     <Button
                         color="blue" size="middle"
-                        className="absolute right-4 top-2"
+                        className="absolute right-8 top-2"
                         variant="solid">GỬI</Button>
                 </div>
                 <div className="w-[95%] m-auto font-sans">

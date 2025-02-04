@@ -6,8 +6,12 @@ import { useParams } from "react-router-dom";
 import ShowMoreLess from "./ShowMoreLess";
 import Comment from "./Comment";
 
+interface IManga {
+    id: number;
+}
+
 const CardDetail = () => {
-    const [manga, setManga] = useState([]);
+    const [manga, setManga] = useState<IManga[]>([]);
     const [comment, setComment] = useState([]);
     const [replyComment, setReplyComment] = useState([]);
     const LIMIT_MANGA = 21;
