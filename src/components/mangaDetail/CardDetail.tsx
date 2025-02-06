@@ -2,7 +2,7 @@ import { Button, Col, Rate, Row, Tag, Input } from "antd"
 import { useEffect, useState } from "react"
 import { UsergroupAddOutlined, StarFilled, EyeFilled, HeartFilled, BellFilled, TagOutlined, EyeTwoTone } from "@ant-design/icons";
 import { assets } from '../../assets/assets';
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ShowMoreLess from "./ShowMoreLess";
 import Comment from "./Comment";
 
@@ -17,6 +17,7 @@ const CardDetail = () => {
     const LIMIT_MANGA = 21;
     const LIMIT_COMMENT = 10;
     const LIMIT_REPCOMMENT = 4;
+    const navigate = useNavigate();
 
     const { id } = useParams();
 
@@ -192,7 +193,7 @@ const CardDetail = () => {
 
                                                 renderItem={(item) => (
                                                     <Col lg={8} md={8} sm={12} xs={24} key={item.id} className="p-2 py-1 cursor-pointer">
-                                                        <a href="#" className="w-full flex items-center bg-neutral-300 p-1 rounded hover:opacity-65 hover:text-slate-500">
+                                                        <a onClick={() => navigate(`/truyen/${id}/chuong/${item.id}`)} className="w-full flex items-center bg-neutral-300 p-1 rounded hover:opacity-65 hover:text-slate-500">
                                                             <div className=" flex items-center rounded-md bg-red-300 w-12 h-14 justify-center">
                                                                 <EyeTwoTone twoToneColor='#f33' className="text-base" />
                                                             </div>

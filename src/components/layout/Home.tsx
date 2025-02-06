@@ -10,8 +10,8 @@ const Home = () => {
         <header><NavHeader /></header>
         <Layout className="max-w-screen-xl m-auto">
           <Content>
-            {/* <AppRouter /> */}
-            <Chapter />
+            <AppRouter />
+            {/* <Chapter /> */}
           </Content>
         </Layout>
         <Footer className="bg-white mt-2 h-5 border-t">FOOTER</Footer>

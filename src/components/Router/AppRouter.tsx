@@ -4,6 +4,7 @@ import Contact from '../HeaderNav/Contact';
 import CardMain from '../manga/CardMain';
 import CardDetail from '../mangaDetail/CardDetail';
 import ScrollToTop from './scrollToTop';
+import Chapter from '../chapter/Chapter';
 
 const AppRouter = () => {
     return (
@@ -15,6 +16,7 @@ const AppRouter = () => {
                 <Route path="/danh-sach" element={<ListSearch />} />
                 <Route path="/lien-he" element={<Contact />} />
                 <Route path="/truyen/:id" element={<CardDetail />} />
+                <Route path="/truyen/:id/chuong/:id" element={<Chapter />} />
             </Routes>
 
         </>

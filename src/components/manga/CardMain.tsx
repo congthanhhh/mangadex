@@ -58,7 +58,7 @@ const CardMain = () => {
                             <div className="">
                                 <Card loading={loading} hoverable size="small"
                                     cover={
-                                        <div onClick={() => navigate(`/truyen/${item.id}`)} className="relative">
+                                        <div onClick={() => navigate(`/truyen/${item.title}`)} className="relative">
                                             <img className="h-[250px] w-full rounded-t-lg" src={assets.mangaImg2} />
                                             <div className="absolute bottom-0 w-full h-5">
                                                 <span className="w-auto font-medium px-[2px] text-xs font-sans h-full text-white flex items-center bg-black opacity-50 rounded-b-sm">
