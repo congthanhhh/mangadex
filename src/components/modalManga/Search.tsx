@@ -41,11 +41,11 @@ const Search = (props: ModelSearchProps) => {
         <>
             <Modal style={{ top: 68 }}
                 width={{
-                    xs: '60%',
+                    xs: '80%',
                     sm: '50%',
                     md: '40%',
                     lg: '30%',
-                    xl: '25%',
+                    xl: '30%',
                 }}
                 open={isOpenSearch} onCancel={handleCancel} footer={null}>
                 <div>
@@ -57,17 +57,17 @@ const Search = (props: ModelSearchProps) => {
                     </div>
                     <div className="max-h-72 overflow-y-auto">
                         {result.length > 0 ? (result.map((item) => (
-                            <Row key={item.id} className="my-2 cursor-pointer mr-1 hover:shadow-md">
-                                <Col span={5}>
+                            <Row key={item.id} className="my-2 cursor-pointer pr-4 hover:shadow-md">
+                                <Col xs={5} sm={5} md={5} >
                                     <a>
-                                        <img src={assets.mangaImg} className="" />
+                                        <img src={assets.mangaImg} className="h-fit" />
                                     </a>
                                 </Col>
-                                <Col span={19} className="pl-1 capitalize relative">
+                                <Col xs={19} sm={19} md={19} className="pl-1 capitalize relative">
                                     <Tooltip title={item.title} arrow={false}>
-                                        <a className="line-clamp-2 font-medium leading-4 text-slate-600" href="">{item.title}</a>
+                                        <a className="absolute top-0 line-clamp-2 font-medium leading-4 text-slate-600" href="">{item.title}</a>
                                     </Tooltip>
-                                    <div className="text-slate-600 font-sans mt-2"> <EyeOutlined /> 2000 view</div>
+                                    <div className="absolute -top-2/3 text-slate-600 font-sans"> <EyeOutlined /> 2000 view</div>
                                     <div className="font-medium  text-slate-500 absolute bottom-0"><a href="">chuong 50</a></div>
                                 </Col>
                             </Row>

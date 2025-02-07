@@ -1,7 +1,6 @@
 import { Modal, Input, Row, Col, Button } from "antd";
 import { useEffect, useState } from "react";
-import { assets } from '../../assets/assets';
-import { EyeOutlined } from "@ant-design/icons";
+
 interface IChapter {
     id: number;
 }

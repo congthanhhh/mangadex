@@ -19,6 +19,23 @@ const CardItem = (props: CardItemProps) => {
                     manga.map((item, index) => (
                         <Col lg={12} key={index}>
                             <div className='p-3'>
+                                <div className='flex items-center w-full justify-between text-[12px] font-sans sm:hidden px-2'>
+                                    <div className='font-medium leading-5 tracking-wide text-[#757575]'>300 chương</div>
+                                    <div className='flex items-center gap-3 text-[#757575]'>
+                                        <div>
+                                            <span><StarFilled style={{ color: '#fd3' }} /></span>
+                                            <span className='font-medium leading-5 tracking-wide pl-1'>5</span>
+                                        </div>
+                                        <div>
+                                            <span><EyeOutlined /></span>
+                                            <span className='font-medium leading-5 tracking-wide pl-1'>20,500,000</span>
+                                        </div>
+                                        <div>
+                                            <span><UsergroupAddOutlined /></span>
+                                            <span className='font-medium leading-5 tracking-wide pl-1'>40,000</span>
+                                        </div>
+                                    </div>
+                                </div>
                                 <Card loading={loading}
                                     hoverable
                                     style={{ height: 180 }}
@@ -34,7 +51,7 @@ const CardItem = (props: CardItemProps) => {
                                             }}
                                         />
                                         <Flex vertical align="flex-end" style={{ padding: 12, position: 'relative' }}>
-                                            <div className='flex items-center w-full justify-between text-[12px] font-sans'>
+                                            <div className='sm:flex sm:items-center w-full justify-between text-[12px] font-sans hidden'>
                                                 <div className='font-medium leading-5 tracking-wide text-[#757575]'>300 chương</div>
                                                 <div className='flex items-center gap-3 text-[#757575]'>
                                                     <div>

@@ -11,14 +11,18 @@ import {
 } from '@ant-design/icons';
 import { Collapse, CollapseProps, Modal } from 'antd'
 import { NavLink } from 'react-router-dom';
+import Login from './Login';
 
 interface ModelInfoProps {
     isOpenUserInfo: boolean;
+    isOpenLogin: boolean;
     handleCancel: () => void;
+    handleCancelLogin: () => void;
+    showModalLogin: () => void;
 
 }
 const UserInfo = (props: ModelInfoProps) => {
-    const { isOpenUserInfo, handleCancel } = props;
+    const { isOpenUserInfo, isOpenLogin, handleCancel, handleCancelLogin, showModalLogin } = props;
 
     const items: CollapseProps['items'] = [
         {
@@ -42,7 +46,7 @@ const UserInfo = (props: ModelInfoProps) => {
             <Modal
                 style={{ top: 68 }}
                 width={{
-                    xs: '60%',
+                    xs: '80%',
                     sm: '50%',
                     md: '40%',
                     lg: '30%',
@@ -51,7 +55,7 @@ const UserInfo = (props: ModelInfoProps) => {
                 title={<div className='text-xl shadow-md p-1'>Thông Tin Tài Khoản</div>}
                 open={isOpenUserInfo} onCancel={handleCancel} footer={null}>
                 <div className='capitalize'>
-                    <div className='cursor-pointer p-1 mb-2 flex hover:bg-red-100 hover:rounded'>
+                    <div onClick={() => showModalLogin()} className='cursor-pointer p-1 mb-2 flex hover:bg-red-100 hover:rounded'>
                         <UserOutlined style={{ fontSize: 22, color: 'GrayText' }} />
                         <span className='text-base ml-2 font-semibold text-gray-500'> đăng nhập</span>
                     </div>
@@ -100,6 +104,7 @@ const UserInfo = (props: ModelInfoProps) => {
                     </div>
                 </div>
             </Modal>
+            <Login isOpenLogin={isOpenLogin} handleCancel={handleCancelLogin} />
         </>
     )
 }

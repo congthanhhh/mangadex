@@ -8,6 +8,7 @@ function NavHeader() {
     const [open, setOpen] = useState(false);
     const location = useLocation();
     const [isOpenUserInfo, setIsOpenUserInfo] = useState(false);
+    const [isOpenLogin, setIsOpenLogin] = useState(false);
     const [isOpenSearch, setIsOpenSearch] = useState(false);
 
     const showModal = () => {
@@ -21,6 +22,13 @@ function NavHeader() {
     }
     const handleCancelSearch = () => {
         setIsOpenSearch(false)
+    }
+    const showModalLogin = () => {
+        setIsOpenLogin(true)
+        handleCancel();
+    }
+    const handleCancelLogin = () => {
+        setIsOpenLogin(false)
     }
 
     const Links = [
@@ -87,7 +95,10 @@ function NavHeader() {
 
             <UserInfo
                 isOpenUserInfo={isOpenUserInfo}
-                handleCancel={handleCancel} />
+                handleCancel={handleCancel}
+                isOpenLogin={isOpenLogin}
+                showModalLogin={showModalLogin}
+                handleCancelLogin={handleCancelLogin} />
 
             <Search
                 isOpenSearch={isOpenSearch}
