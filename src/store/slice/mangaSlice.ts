@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { MangaState } from "../../types/AuthTypes";
+import { getMangaList } from "../../services/mangaService";
 
 const initialState: MangaState = {
     mangaList: [],
@@ -14,11 +15,9 @@ export const fetchManga = createAsyncThunk(
     'manga/fetchManga',
     async ({ page, pageSize }: { page: number; pageSize: number }, thunkAPI) => {
         try {
-            const res = await fetch(`https://jsonplaceholder.typicode.com/posts?_page=${page}&_limit=${pageSize}`);
-            const data = await res.json();
-            const total = res.headers.get('X-Total-Count');
-            return { data, total: Number(total) };
-        } catch (error) {
+            const { data, total } = await getMangaList(page, pageSize);
+            return { data, total };
+        } catch (error: any) {
             return thunkAPI.rejectWithValue('Failed to fetch manga');
         }
     }
