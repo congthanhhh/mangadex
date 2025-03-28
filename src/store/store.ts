@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit'
-import authReducer from './auth/authSlice'
+import authReducer from './slice/authSlice'
+import mangaReducer from './slice/mangaSlice'
 
 export const store = configureStore({
     reducer: {
         auth: authReducer,
+        manga: mangaReducer,
     },
 })
 

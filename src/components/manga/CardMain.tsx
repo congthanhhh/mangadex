@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Card, Col, Row, Tooltip } from "antd";
 import PaginationManga from "../pagination/PaginationManga";
 import { CodepenCircleOutlined, EyeFilled, UsergroupAddOutlined } from "@ant-design/icons";
@@ -7,41 +7,41 @@ import CardNew from "./CardNew";
 import CardProposal from "./CardProposal";
 import CarouselItem from "./CarouselItem";
 import { useNavigate } from "react-router-dom";
-interface IManga {
-    id: number;
-    title: string;
-}
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { fetchManga, setCurrentPage } from "../../store/slice/mangaSlice";
 
 const CardMain = () => {
-    const [manga, setManga] = useState<IManga[]>([]);
-    const [totalPages, setTotalPages] = useState(0);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [loading, setLoading] = useState(false);
-    const pageSize = 30;
+    // const [manga, setManga] = useState<IManga[]>([]);
+    // const [totalPages, setTotalPages] = useState(0);
+    // const [currentPage, setCurrentPage] = useState(1);
+    // const [loading, setLoading] = useState(false);
+    // const pageSize = 30;
+    // const fetchManga = async (page: number, pageSize: number) => {
+    //     setLoading(true);
+    //     try {
+    //         const res = await fetch(`https://jsonplaceholder.typicode.com/posts?_page=${page}&_limit=${pageSize}`);
+    //         const data = await res.json();
+    //         const total = res.headers.get("X-Total-Count");
+    //         setManga(data);
+    //         setTotalPages(Number(total));
+    //     } catch (error) {
+    //         console.error("Error fetching data:", error);
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
 
     const navigate = useNavigate();
-
-    const fetchManga = async (page: number, pageSize: number) => {
-        setLoading(true);
-        try {
-            const res = await fetch(`https://jsonplaceholder.typicode.com/posts?_page=${page}&_limit=${pageSize}`);
-            const data = await res.json();
-            const total = res.headers.get("X-Total-Count");
-            setManga(data);
-            setTotalPages(Number(total));
-        } catch (error) {
-            console.error("Error fetching data:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
+    const pageSize = 10;
+    const dispatch = useAppDispatch();
+    const { mangaList, totalPages, currentPage, loading } = useAppSelector((state) => state.manga);
 
     useEffect(() => {
-        fetchManga(currentPage, pageSize);
-    }, [currentPage]);
+        dispatch(fetchManga({ page: currentPage, pageSize: pageSize }));
+    }, [currentPage, dispatch]);
 
     const handlePageChange = (page: number) => {
-        setCurrentPage(page);
+        dispatch(setCurrentPage(page));
     };
 
     return (
@@ -52,7 +52,7 @@ const CardMain = () => {
                 <hr className="block flex-1 border border-gray-30 border-opacity-30 border-solid transition max-w-full" />
             </div>
             <Row gutter={10}>
-                {manga.map((item) => (
+                {mangaList.map((item) => (
                     <Col xs={12} sm={8} md={6} lg={4} key={item.id} >
                         <div className="pt-3 ">
                             <div className="">
