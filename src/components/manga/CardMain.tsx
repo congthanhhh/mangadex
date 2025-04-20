@@ -11,28 +11,9 @@ import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { fetchManga, setCurrentPage } from "../../store/slice/mangaSlice";
 
 const CardMain = () => {
-    // const [manga, setManga] = useState<IManga[]>([]);
-    // const [totalPages, setTotalPages] = useState(0);
-    // const [currentPage, setCurrentPage] = useState(1);
-    // const [loading, setLoading] = useState(false);
-    // const pageSize = 30;
-    // const fetchManga = async (page: number, pageSize: number) => {
-    //     setLoading(true);
-    //     try {
-    //         const res = await fetch(`https://jsonplaceholder.typicode.com/posts?_page=${page}&_limit=${pageSize}`);
-    //         const data = await res.json();
-    //         const total = res.headers.get("X-Total-Count");
-    //         setManga(data);
-    //         setTotalPages(Number(total));
-    //     } catch (error) {
-    //         console.error("Error fetching data:", error);
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
 
     const navigate = useNavigate();
-    const pageSize = 10;
+    const pageSize = 3;
     const dispatch = useAppDispatch();
     const { mangaList, totalPages, currentPage, loading } = useAppSelector((state) => state.manga);
 

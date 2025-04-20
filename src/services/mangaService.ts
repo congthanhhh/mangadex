@@ -1,14 +1,14 @@
 import axiosInstance from "../utils/axiosInstance"
 
-export const getMangaList = async (page: number, pageSize: number) => {
-    const response = await axiosInstance.get('/posts', {
+export const getMangaListAPI = async (page: number, pageSize: number) => {
+    const response = await axiosInstance.get('/manga/paginated', {
         params: {
-            _page: page,
-            _pageSize: pageSize,
+            page: page,
+            pageSize: pageSize,
         },
     });
-    const total = response.headers['x-total-count'];
+    const total = response.data.result.totalPages;
     return {
-        data: response.data, total: Number(total),
+        data: response.data.result.content, total: Number(total),
     };
 }

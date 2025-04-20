@@ -1,7 +1,9 @@
 import axios from 'axios';
+import { getToken } from './tokenUtils';
 
 const axiosInstance = axios.create({
-    baseURL: 'https://jsonplaceholder.typicode.com', // Thay đổi baseURL theo API của bạn
+    // baseURL: 'https://jsonplaceholder.typicode.com',
+    baseURL: 'http://localhost:8080/comic',
     headers: {
         'Content-Type': 'application/json',
     },
@@ -10,11 +12,10 @@ const axiosInstance = axios.create({
 // Thêm interceptor để xử lý request và response (nếu cần)
 axiosInstance.interceptors.request.use(
     (config) => {
-        // Bạn có thể thêm token vào header nếu cần
-        // const token = localStorage.getItem('accessToken');
-        // if (token) {
-        //     config.headers.Authorization = `Bearer ${token}`;
-        // }
+        const token = getToken();
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
         return config;
     },
     (error) => {
@@ -27,7 +28,6 @@ axiosInstance.interceptors.response.use(
         return response;
     },
     (error) => {
-        // Xử lý lỗi toàn cục (nếu cần)
         return Promise.reject(error);
     }
 );

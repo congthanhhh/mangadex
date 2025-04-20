@@ -1,11 +1,11 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { MangaState } from "../../types/AuthTypes";
-import { getMangaList } from "../../services/mangaService";
+import { getMangaListAPI } from "../../services/mangaService";
 
 const initialState: MangaState = {
     mangaList: [],
     totalPages: 0,
-    currentPage: 1,
+    currentPage: 0,
     loading: false,
     error: null,
 };
@@ -15,7 +15,7 @@ export const fetchManga = createAsyncThunk(
     'manga/fetchManga',
     async ({ page, pageSize }: { page: number; pageSize: number }, thunkAPI) => {
         try {
-            const { data, total } = await getMangaList(page, pageSize);
+            const { data, total } = await getMangaListAPI(page, pageSize);
             return { data, total };
         } catch (error: any) {
             return thunkAPI.rejectWithValue('Failed to fetch manga');
