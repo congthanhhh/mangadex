@@ -2,7 +2,6 @@ import axios from 'axios';
 import { getToken } from './tokenUtils';
 
 const axiosInstance = axios.create({
-    // baseURL: 'https://jsonplaceholder.typicode.com',
     baseURL: 'http://localhost:8080/comic',
     headers: {
         'Content-Type': 'application/json',

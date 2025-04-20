@@ -8,19 +8,21 @@ import CardProposal from "./CardProposal";
 import CarouselItem from "./CarouselItem";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { fetchManga, setCurrentPage } from "../../store/slice/mangaSlice";
+import { fetchPaginatedManga, setCurrentPage } from "../../store/slice/mangaSlice";
 
 const CardMain = () => {
-
     const navigate = useNavigate();
-    const pageSize = 3;
     const dispatch = useAppDispatch();
-    const { mangaList, totalPages, currentPage, loading } = useAppSelector((state) => state.manga);
 
+    // Get manga state from Redux store
+    const { mangaList, totalPages, currentPage, pageSize, loading } = useAppSelector(state => state.manga);
+
+    // Fetch manga data when component mounts or when page changes
     useEffect(() => {
-        dispatch(fetchManga({ page: currentPage, pageSize: pageSize }));
-    }, [currentPage, dispatch]);
+        dispatch(fetchPaginatedManga({ page: currentPage, pageSize }));
+    }, [dispatch, currentPage, pageSize]);
 
+    // Handle page change
     const handlePageChange = (page: number) => {
         dispatch(setCurrentPage(page));
     };
@@ -34,17 +36,17 @@ const CardMain = () => {
             </div>
             <Row gutter={10}>
                 {mangaList.map((item) => (
-                    <Col xs={12} sm={8} md={6} lg={4} key={item.id} >
+                    <Col xs={12} sm={8} md={6} lg={4} key={item.title} >
                         <div className="pt-3 ">
                             <div className="">
                                 <Card loading={loading} hoverable size="small"
                                     cover={
                                         <div onClick={() => navigate(`/truyen/${item.title}`)} className="relative">
-                                            <img className="h-[250px] w-full rounded-t-lg" src={assets.mangaImg2} />
+                                            <img className="h-[250px] w-full rounded-t-lg" src={item.imageUrl || assets.mangaImg2} />
                                             <div className="absolute bottom-0 w-full h-5">
                                                 <span className="w-auto font-medium px-[2px] text-xs font-sans h-full text-white flex items-center bg-black opacity-50 rounded-b-sm">
                                                     <EyeFilled className="mx-2 fill-white" style={{ fontSize: '15px' }} />
-                                                    1,280,000
+                                                    {item.viewCount || 0}
                                                     <UsergroupAddOutlined className="mx-2 fill-white" style={{ fontSize: '15px' }} />
                                                     1,180
                                                 </span>
@@ -57,7 +59,7 @@ const CardMain = () => {
                                         }}
                                         title={
                                             <Tooltip title={item.title} arrow={false}>
-                                                <a onClick={() => navigate(`/truyen/${item.id}`)} className="h-8 text-wrap line-clamp-2 hover:text-red-700">
+                                                <a onClick={() => navigate(`/truyen/${item.title}`)} className="h-8 text-wrap line-clamp-2 hover:text-red-700">
                                                     <span>{item.title}</span>
                                                 </a>
                                             </Tooltip>
@@ -79,7 +81,6 @@ const CardMain = () => {
                                                         <span className="text-xs">2 giờ trước</span>
                                                     </div>
                                                 </a>
-
                                             </div>
                                         } />
                                 </Card>
