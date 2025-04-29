@@ -36,12 +36,12 @@ const CardMain = () => {
             </div>
             <Row gutter={10}>
                 {mangaList.map((item) => (
-                    <Col xs={12} sm={8} md={6} lg={4} key={item.title} >
+                    <Col xs={12} sm={8} md={6} lg={4} key={item.id} >
                         <div className="pt-3 ">
                             <div className="">
                                 <Card loading={loading} hoverable size="small"
                                     cover={
-                                        <div onClick={() => navigate(`/truyen/${item.title}`)} className="relative">
+                                        <div onClick={() => navigate(`/truyen/${item.id}`)} className="relative">
                                             <img className="h-[250px] w-full rounded-t-lg" src={item.imageUrl || assets.mangaImg2} />
                                             <div className="absolute bottom-0 w-full h-5">
                                                 <span className="w-auto font-medium px-[2px] text-xs font-sans h-full text-white flex items-center bg-black opacity-50 rounded-b-sm">

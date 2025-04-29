@@ -5,13 +5,12 @@ import { assets } from '../../assets/assets';
 import { useNavigate, useParams } from "react-router-dom";
 import ShowMoreLess from "./ShowMoreLess";
 import Comment from "./Comment";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { fetchChaptersByMangaId } from "../../store/slice/chapterSlice";
+import { fetchMangaById } from "../../store/slice/mangaSlice";
 
-interface IManga {
-    id: number;
-}
 
 const CardDetail = () => {
-    const [manga, setManga] = useState<IManga[]>([]);
     const [comment, setComment] = useState([]);
     const [replyComment, setReplyComment] = useState([]);
     const LIMIT_MANGA = 21;
@@ -21,15 +20,10 @@ const CardDetail = () => {
 
     const { id } = useParams();
 
-    const fetchDetail = async () => {
-        try {
-            const res = await fetch(`https://jsonplaceholder.typicode.com/todos`);
-            const data = await res.json();
-            setManga(data);
-        } catch (error) {
-            console.error("Error fetching data:", error);
-        }
-    };
+    const dispatch = useAppDispatch();
+    const { chapters, loading, error } = useAppSelector(state => state.chapter);
+    const { selectedManga } = useAppSelector(state => state.manga);
+
     const fetchComment = async () => {
         try {
             const res = await fetch(`https://jsonplaceholder.typicode.com/posts`);
@@ -50,10 +44,13 @@ const CardDetail = () => {
     };
 
     useEffect(() => {
-        fetchDetail();
+        if (id) {
+            dispatch(fetchChaptersByMangaId(id));
+            dispatch(fetchMangaById(id));
+        }
         fetchComment();
         fetchReplyComment();
-    }, [])
+    }, [id, dispatch]);
 
     return (
         <div>
@@ -66,7 +63,7 @@ const CardDetail = () => {
                         <div>
                             <div className="flex items-center">
                                 <div className="w-full mx-auto h-[450px] min-w-[275px] max-w-[295px] rounded-md">
-                                    <img className="w-full h-full rounded-md" src={assets.mangaImg2} />
+                                    <img className="w-full h-full rounded-md" src={selectedManga?.imageUrl} />
                                 </div>
                             </div>
                         </div>
@@ -185,36 +182,49 @@ const CardDetail = () => {
                                             <Input placeholder="CHƯƠNG" className="w-[90px] mx-1" />
                                         </div>
                                         <Row className="p-4">
-                                            <ShowMoreLess
-                                                data={manga}
-                                                initialVisible={LIMIT_MANGA}
-                                                className="pt-2 w-full"
-                                                buttonClassName="w-full h-11 rounded-md text-sm px-4 border-2"
-
-                                                renderItem={(item) => (
-                                                    <Col lg={8} md={8} sm={12} xs={24} key={item.id} className="p-2 py-1 cursor-pointer">
-                                                        <a onClick={() => navigate(`/truyen/${id}/chuong/${item.id}`)} className="w-full flex items-center bg-neutral-300 p-1 rounded hover:opacity-65 hover:text-slate-500">
-                                                            <div className=" flex items-center rounded-md bg-red-300 w-12 h-14 justify-center">
-                                                                <EyeTwoTone twoToneColor='#f33' className="text-base" />
-                                                            </div>
-                                                            <div className="flex justify-center flex-col py-1 px-2 w-full">
-                                                                <div className="text-base font-normal">
-                                                                    <span>#{item.id}</span>
+                                            {loading ? (
+                                                <div className="w-full text-center p-4">
+                                                    Đang tải danh sách chương...
+                                                </div>
+                                            ) : error ? (
+                                                <div className="w-full text-center p-4 text-red-500">
+                                                    Lỗi: {error}
+                                                </div>
+                                            ) : chapters && chapters.length > 0 ? (
+                                                <ShowMoreLess
+                                                    data={chapters}
+                                                    initialVisible={LIMIT_MANGA}
+                                                    className="pt-2 w-full"
+                                                    buttonClassName="w-full h-11 rounded-md text-sm px-4 border-2"
+                                                    renderItem={(item) => (
+                                                        <Col lg={8} md={8} sm={12} xs={24} key={item.chapterNumber} className="p-2 py-1 cursor-pointer">
+                                                            <a onClick={() => navigate(`/truyen/${id}/chuong/${item.chapterNumber}`)} className="w-full flex items-center bg-neutral-300 p-1 rounded hover:opacity-65 hover:text-slate-500">
+                                                                <div className=" flex items-center rounded-md bg-red-300 w-12 h-14 justify-center">
+                                                                    <EyeTwoTone twoToneColor='#f33' className="text-base" />
                                                                 </div>
-                                                                <div className="flex justify-between text-xs text-slate-500 font-sans">
-                                                                    <div>
-                                                                        <span>30-01-2025</span>
+                                                                <div className="flex justify-center flex-col py-1 px-2 w-full">
+                                                                    <div className="text-base font-normal">
+                                                                        <span>#{item.chapterNumber}</span>
                                                                     </div>
-                                                                    <div>
-                                                                        <EyeFilled />
-                                                                        <span className="pl-1">20.000</span>
+                                                                    <div className="flex justify-between text-xs text-slate-500 font-sans">
+                                                                        <div>
+                                                                            <span>30-01-2025</span>
+                                                                        </div>
+                                                                        <div>
+                                                                            <EyeFilled />
+                                                                            <span className="pl-1">20.000</span>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-                                                            </div>
-                                                        </a>
-                                                    </Col>
-                                                )}
-                                            />
+                                                            </a>
+                                                        </Col>
+                                                    )}
+                                                />
+                                            ) : (
+                                                <div className="w-full text-center p-4">
+                                                    Không có chương nào
+                                                </div>
+                                            )}
                                         </Row>
                                     </div>
                                 </div>

@@ -1,25 +1,30 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { Manga, MangaResponse, getPaginatedManga } from '../../services/mangaService';
+import { Manga, MangaResponse, getPaginatedMangaAPI, getMangaByIdAPI } from '../../services/mangaService';
 
-// State interface for manga
 interface MangaState {
     mangaList: Manga[];
+    selectedManga: Manga | null;
     totalPages: number;
     totalElements: number;
     currentPage: number;
     pageSize: number;
     loading: boolean;
+    loadingMangaDetail: boolean;
     error: string | null;
+    detailError: string | null;
 }
 
 const initialState: MangaState = {
     mangaList: [],
+    selectedManga: null,
     totalPages: 0,
     totalElements: 0,
     currentPage: 1,
     pageSize: 2,
     loading: false,
-    error: null
+    loadingMangaDetail: false,
+    error: null,
+    detailError: null
 };
 
 export const fetchPaginatedManga = createAsyncThunk(
@@ -27,10 +32,22 @@ export const fetchPaginatedManga = createAsyncThunk(
     async ({ page, pageSize }: { page: number, pageSize: number }, { rejectWithValue }) => {
         try {
             const apiPage = page - 1;
-            const response = await getPaginatedManga(apiPage, pageSize);
+            const response = await getPaginatedMangaAPI(apiPage, pageSize);
             return response;
         } catch (error) {
             return rejectWithValue('Failed to fetch manga');
+        }
+    }
+);
+
+export const fetchMangaById = createAsyncThunk(
+    'manga/fetchById',
+    async (mangaId: string, { rejectWithValue }) => {
+        try {
+            const response = await getMangaByIdAPI(mangaId);
+            return response;
+        } catch (error) {
+            return rejectWithValue('Failed to fetch manga details');
         }
     }
 );
@@ -41,6 +58,9 @@ const mangaSlice = createSlice({
     reducers: {
         setCurrentPage: (state, action: PayloadAction<number>) => {
             state.currentPage = action.payload;
+        },
+        clearSelectedManga: (state) => {
+            state.selectedManga = null;
         },
     },
     extraReducers: (builder) => {
@@ -60,9 +80,21 @@ const mangaSlice = createSlice({
             .addCase(fetchPaginatedManga.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload as string;
+            })
+            .addCase(fetchMangaById.pending, (state) => {
+                state.loadingMangaDetail = true;
+                state.detailError = null;
+            })
+            .addCase(fetchMangaById.fulfilled, (state, action: PayloadAction<Manga>) => {
+                state.loadingMangaDetail = false;
+                state.selectedManga = action.payload;
+            })
+            .addCase(fetchMangaById.rejected, (state, action) => {
+                state.loadingMangaDetail = false;
+                state.detailError = action.payload as string;
             });
     }
 });
 
-export const { setCurrentPage } = mangaSlice.actions;
+export const { setCurrentPage, clearSelectedManga } = mangaSlice.actions;
 export default mangaSlice.reducer;
