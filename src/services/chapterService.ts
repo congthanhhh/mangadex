@@ -7,6 +7,7 @@ export interface PageChapterResponse {
 }
 
 export interface Chapter {
+    id: number;
     chapterNumber: number;
     title: string;
     releaseDate: string;

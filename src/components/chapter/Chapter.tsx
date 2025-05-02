@@ -2,9 +2,10 @@ import { Breadcrumb, Button } from "antd"
 import { MenuOutlined, VerticalLeftOutlined, VerticalRightOutlined, EyeFilled } from "@ant-design/icons"
 import { useEffect, useState } from "react"
 import SelectChapter from "../modalManga/SelectChapter"
-import { pageData } from "../../assets/assets"
 import Comment from "../mangaDetail/Comment"
 import { useParams, NavLink } from "react-router-dom"
+import { useAppDispatch, useAppSelector } from "../../store/hooks"
+import { fetchPagesByChapterId } from "../../store/slice/pageSlice"
 
 
 const Chapter = () => {
@@ -15,7 +16,8 @@ const Chapter = () => {
     const [replyComment, setReplyComment] = useState([]);
     const LIMIT_COMMENT = 10;
     const LIMIT_REPCOMMENT = 4;
-    const { id } = useParams();
+
+    const { id, chapterNumber } = useParams();
 
     const fetchComment = async () => {
         try {
@@ -36,10 +38,17 @@ const Chapter = () => {
         }
     };
 
+    const dispatch = useAppDispatch();
+    const { pages } = useAppSelector(state => state.page);
+
     useEffect(() => {
+        if (id) {
+            dispatch(fetchPagesByChapterId(Number(id)));
+        }
+
         fetchComment();
         fetchReplyComment();
-    }, [])
+    }, [id, dispatch]);
 
     const showModal = () => {
         setIsOpenChapter(true)
@@ -80,13 +89,13 @@ const Chapter = () => {
                                         href: '',
                                         title: (
                                             <span className="text-red-600 cursor-pointer">
-                                                {`One piece: Đảo hải tặc`}
+                                                {pages[0]?.titleComic}
                                             </span>
                                         ),
                                     },
                                     {
                                         href: '',
-                                        title: <span className="text-red-600 cursor-pointer">Chương #300</span>,
+                                        title: <span className="text-red-600 cursor-pointer">Chương #{chapterNumber}</span>,
                                     },
                                 ]}
                             />
@@ -112,12 +121,11 @@ const Chapter = () => {
                 </div>
                 {/* content*/}
                 <div>
-                    <span>PageID:{id}</span>
-                    {pageData.map((item) => (
-                        <div className="w-fit m-auto py-1">
+                    {pages.map((item) => (
+                        <div className="w-fit m-auto py-1" key={item.pageNumber}>
                             <img
-                                src={item.image}
-                                alt={`Img_${item.id}`}
+                                src={item.imageUrl}
+                                alt={`Img_${item.titleComic}_${item.chapterNumber}_${item.pageNumber}`}
                                 className="object-contain" />
                         </div>
                     ))}

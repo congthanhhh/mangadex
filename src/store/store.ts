@@ -2,12 +2,14 @@ import { configureStore } from '@reduxjs/toolkit'
 import authReducer from './slice/authSlice'
 import mangaReducer from './slice/mangaSlice'
 import chapterReducer from './slice/chapterSlice'
+import pageReducer from './slice/pageSlice'
 
 export const store = configureStore({
     reducer: {
         auth: authReducer,
         manga: mangaReducer,
         chapter: chapterReducer,
+        page: pageReducer,
     },
 })
 

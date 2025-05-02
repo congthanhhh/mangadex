@@ -1,7 +1,6 @@
 import { Button, Col, Rate, Row, Tag, Input } from "antd"
 import { useEffect, useState } from "react"
 import { UsergroupAddOutlined, StarFilled, EyeFilled, HeartFilled, BellFilled, TagOutlined, EyeTwoTone } from "@ant-design/icons";
-import { assets } from '../../assets/assets';
 import { useNavigate, useParams } from "react-router-dom";
 import ShowMoreLess from "./ShowMoreLess";
 import Comment from "./Comment";
@@ -197,8 +196,8 @@ const CardDetail = () => {
                                                     className="pt-2 w-full"
                                                     buttonClassName="w-full h-11 rounded-md text-sm px-4 border-2"
                                                     renderItem={(item) => (
-                                                        <Col lg={8} md={8} sm={12} xs={24} key={item.chapterNumber} className="p-2 py-1 cursor-pointer">
-                                                            <a onClick={() => navigate(`/truyen/${id}/chuong/${item.chapterNumber}`)} className="w-full flex items-center bg-neutral-300 p-1 rounded hover:opacity-65 hover:text-slate-500">
+                                                        <Col lg={8} md={8} sm={12} xs={24} key={item.id} className="p-2 py-1 cursor-pointer">
+                                                            <a onClick={() => navigate(`/chapter/${item.id}/chapter-number/${item.chapterNumber}`)} className="w-full flex items-center bg-neutral-300 p-1 rounded hover:opacity-65 hover:text-slate-500">
                                                                 <div className=" flex items-center rounded-md bg-red-300 w-12 h-14 justify-center">
                                                                     <EyeTwoTone twoToneColor='#f33' className="text-base" />
                                                                 </div>

@@ -18,7 +18,7 @@ const AppRouter = () => {
                 <Route path="/danh-sach" element={<ListSearch />} />
                 <Route path="/lien-he" element={<Contact />} />
                 <Route path="/truyen/:id" element={<CardDetail />} />
-                <Route path="/truyen/:id/chuong/:id" element={<Chapter />} />
+                <Route path="/chapter/:id/chapter-number/:chapterNumber" element={<Chapter />} />
 
                 <Route path="/authenticate" element={<Authenticate />} />
                 <Route path="/home-profile" element={<HomeProfile />} />
