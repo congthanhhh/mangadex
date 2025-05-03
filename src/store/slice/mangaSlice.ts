@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { Manga, MangaResponse, getPaginatedMangaAPI, getMangaByIdAPI } from '../../services/mangaService';
 
+const PAGE_SIZE = 7; // Default page size
 interface MangaState {
     mangaList: Manga[];
     selectedManga: Manga | null;
@@ -13,14 +14,13 @@ interface MangaState {
     error: string | null;
     detailError: string | null;
 }
-
 const initialState: MangaState = {
     mangaList: [],
     selectedManga: null,
     totalPages: 0,
     totalElements: 0,
     currentPage: 1,
-    pageSize: 2,
+    pageSize: PAGE_SIZE,
     loading: false,
     loadingMangaDetail: false,
     error: null,

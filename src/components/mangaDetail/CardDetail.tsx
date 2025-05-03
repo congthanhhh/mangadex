@@ -54,7 +54,6 @@ const CardDetail = () => {
     return (
         <div>
             <div>
-                ID Manga: {id}
             </div>
             <div className="w-full mb-2">
                 <Row>
@@ -130,24 +129,16 @@ const CardDetail = () => {
                         <div className="w-full">
                             <div>
                                 <div className="rounded-md bg-neutral-200 pb-4">
-                                    <div className="capitalize text-2xl leading-6 font-bold px-4 pt-4 ">Hóa thân thành mèo</div>
+                                    <div className="capitalize text-2xl leading-6 font-bold px-4 pt-4 ">{selectedManga?.title}</div>
                                     <div className='px-4 py-2 flex flex-wrap'>
-                                        <Tag icon={<TagOutlined />} className='mt-1 bg-slate-300 hover:opacity-50 rounded-xl text-xs h-6 font-medium flex items-center'>
-                                            <a href="#">Hành Động</a>
-                                        </Tag>
-                                        <Tag icon={<TagOutlined />} className='mt-1 bg-slate-300 hover:opacity-50 rounded-xl text-xs h-6 font-medium flex items-center'>
-                                            <a href="#">Hành Động</a>
-                                        </Tag>
-                                        <Tag icon={<TagOutlined />} className='mt-1 bg-slate-300 hover:opacity-50 rounded-xl text-xs h-6 font-medium flex items-center'>
-                                            <a href="#">Drama</a>
-                                        </Tag>
-                                        <Tag icon={<TagOutlined />} className='mt-1 bg-slate-300 hover:opacity-50 rounded-xl text-xs h-6 font-medium flex items-center'>
-                                            <a href="#">Hành Động</a>
-                                        </Tag>
+                                        {selectedManga?.genres.map((genre) => (
+                                            <Tag icon={<TagOutlined />} key={genre.id} className='mt-1 bg-slate-300 hover:opacity-50 rounded-xl text-xs h-6 font-medium flex items-center'>
+                                                <a href="#">{genre.name}</a>
+                                            </Tag>))}
 
                                     </div>
                                     <div className="line-clamp-3 px-4 text-sm">
-                                        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Temporibus impedit ea eius est! Debitis ipsa laborum excepturi explicabo illo? Ipsam, laudantium fuga eaque, repellat nostrum sapiente vitae quisquam harum ea maiores ab accusantium ipsum reiciendis vero voluptatibus magnam iusto aliquid aspernatur! Nam, soluta. Earum quaerat temporibus iste recusandae debitis ipsa ipsam adipisci magni aut cupiditate. Doloremque, porro quidem reprehenderit delectus cum iure distinctio laborum eligendi error sequi ipsam eveniet possimus animi aliquid vel libero cumque molestias explicabo est ad nobis qui sit temporibus. Unde blanditiis, repellendus reiciendis velit fuga, vero officia nostrum facere voluptas pariatur necessitatibus sunt ea quaerat aliquid.
+                                        {selectedManga?.description}
                                     </div>
                                 </div>
                                 <div className="rounded-md w-full mt-1 bg-neutral-200">
@@ -161,7 +152,7 @@ const CardDetail = () => {
                                                 Tác giả: <span className="text-green-700 pl-2">Updating</span>
                                             </div>
                                             <div className="text-sm mb-1 font-normal uppercase">
-                                                Trạng Thái: <span className="text-green-700 pl-2">Updating</span>
+                                                Trạng Thái: <span className="text-green-700 pl-2">{selectedManga?.status}</span>
                                             </div>
                                             <div className="text-sm mb-1 font-normal">
                                                 <div className="border border-sky-500 rounded-md mt-1 bg-[#1f53794d]">

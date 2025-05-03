@@ -12,6 +12,11 @@ export interface MangaResponse {
     };
 }
 
+export interface GenreResponse {
+    id: number;
+    name: string;
+}
+
 export interface Manga {
     id: string;
     title: string;
@@ -20,7 +25,7 @@ export interface Manga {
     description: string;
     viewCount: number;
     ageRating: string | null;
-    genres: string[];
+    genres: GenreResponse[];
     isActive: boolean;
 }
 
