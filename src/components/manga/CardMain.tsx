@@ -13,9 +13,10 @@ import { fetchPaginatedManga, setCurrentPage } from "../../store/slice/mangaSlic
 const CardMain = () => {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
+    const pageSize = 5; // Number of items per page
 
     // Get manga state from Redux store
-    const { mangaList, totalPages, currentPage, pageSize, loading } = useAppSelector(state => state.manga);
+    const { mangaList, totalPages, currentPage, loading } = useAppSelector(state => state.manga);
 
     // Fetch manga data when component mounts or when page changes
     useEffect(() => {
@@ -74,13 +75,14 @@ const CardMain = () => {
                                                         <span className="text-xs">1 giờ trước</span>
                                                     </div>
                                                 </a>
-                                                <a className="text-sm text-gray-500 flex items-center hover:text-red-700">
+                                                <a className="text-sm text-gray-500 flex items-center hover:text-red-700 hover:fill-red-700">
                                                     <div className="z-[1]"><CodepenCircleOutlined style={{ fontSize: '20px' }} /></div>
                                                     <div className="flex flex-col pl-3 pb-2">
-                                                        <span className="text-sm font-medium">20</span>
-                                                        <span className="text-xs">2 giờ trước</span>
+                                                        <span className="text-sm font-medium">21</span>
+                                                        <span className="text-xs">1 giờ trước</span>
                                                     </div>
                                                 </a>
+
                                             </div>
                                         } />
                                 </Card>

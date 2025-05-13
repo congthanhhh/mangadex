@@ -27,6 +27,7 @@ export interface Manga {
     ageRating: string | null;
     genres: GenreResponse[];
     isActive: boolean;
+    totalChapters: number;
 }
 
 // Fetch paginated manga
@@ -46,6 +47,16 @@ export const getMangaByIdAPI = async (mangaId: string): Promise<Manga> => {
         return response.data.result;
     } catch (error) {
         console.error("Error fetching manga by ID:", error);
+        throw error;
+    }
+}
+
+export const getMangaNewAPI = async (page: number, pageSize: number): Promise<MangaResponse> => {
+    try {
+        const response = await axiosInstance.get(`/manga/paginated/new?page=${page}&pageSize=${pageSize}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching new manga:", error);
         throw error;
     }
 }

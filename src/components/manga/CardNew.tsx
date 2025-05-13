@@ -1,37 +1,22 @@
 import CardItem from "./CardItem"
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import PaginationManga from '../pagination/PaginationManga';
-interface IManga {
-    title: string;
-    body: string;
-}
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { fetchMangaNew, setCurrentPage } from "../../store/slice/mangaSlice";
+
 
 const CardNew = () => {
-    const [manga, setManga] = useState<IManga[]>([]);
-    const [totalPages, setTotalPages] = useState(0);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [loading, setLoading] = useState(false);
-    const pageSize = 10;
-    const fetchProposal = async (page: number, pageSize: number) => {
-        setLoading(true);
-        try {
-            const res = await fetch(`https://jsonplaceholder.typicode.com/posts?_page=${page}&_limit=${pageSize}`);
-            const data = await res.json();
-            const total = res.headers.get("X-Total-Count");
-            setManga(data);
-            setTotalPages(Number(total));
-        } catch (error) {
-            console.error("Error fetching data:", error);
-        } finally {
-            setLoading(false)
-        }
-    }
+    const dispatch = useAppDispatch()
+    const pageSize = 4;
+    // Get manga state from Redux store
+    const { mangaList, totalPages, currentPage, loading } = useAppSelector(state => state.manga);
+
     useEffect(() => {
-        fetchProposal(currentPage, pageSize);
+        dispatch(fetchMangaNew({ page: currentPage, pageSize }));
     }, [currentPage])
 
     const handlePageChange = (page: number) => {
-        setCurrentPage(page);
+        dispatch(setCurrentPage(page));
     }
     return (
         <div className="mt-3">
@@ -39,7 +24,7 @@ const CardNew = () => {
                 <div className='uppercase h-9 min-w-16 px-4 pt-1 text-xl font-medium'>Truyện mới</div>
                 <hr className="block flex-1 border border-gray-30 border-opacity-30 border-solid transition max-w-full" />
             </div>
-            <CardItem manga={manga} loading={loading} />
+            <CardItem manga={mangaList} loading={loading} />
             <div className="my-2 w-full pr-3">
                 <div className="flex items-center">
                     <hr className="block flex-1 border border-gray-30 border-opacity-30 border-solid transition max-w-full" />

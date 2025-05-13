@@ -1,14 +1,13 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { Manga, MangaResponse, getPaginatedMangaAPI, getMangaByIdAPI } from '../../services/mangaService';
 
-const PAGE_SIZE = 7; // Default page size
 interface MangaState {
     mangaList: Manga[];
     selectedManga: Manga | null;
     totalPages: number;
     totalElements: number;
     currentPage: number;
-    pageSize: number;
+    // pageSize: number;
     loading: boolean;
     loadingMangaDetail: boolean;
     error: string | null;
@@ -20,7 +19,7 @@ const initialState: MangaState = {
     totalPages: 0,
     totalElements: 0,
     currentPage: 1,
-    pageSize: PAGE_SIZE,
+    // pageSize: PAGE_SIZE,
     loading: false,
     loadingMangaDetail: false,
     error: null,
@@ -39,6 +38,18 @@ export const fetchPaginatedManga = createAsyncThunk(
         }
     }
 );
+
+export const fetchMangaNew = createAsyncThunk(
+    'manga/fetchNew',
+    async ({ page, pageSize }: { page: number, pageSize: number }, { rejectWithValue }) => {
+        try {
+            const apiPage = page - 1;
+            const response = await getPaginatedMangaAPI(apiPage, pageSize);
+            return response;
+        } catch (error) {
+            return rejectWithValue('Failed to fetch new manga');
+        }
+    });
 
 export const fetchMangaById = createAsyncThunk(
     'manga/fetchById',
@@ -75,7 +86,7 @@ const mangaSlice = createSlice({
                 state.totalPages = action.payload.result.totalPages;
                 state.totalElements = action.payload.result.totalElements;
                 state.currentPage = action.payload.result.currentPage + 1;
-                state.pageSize = action.payload.result.pageSize;
+                // state.pageSize = action.payload.result.pageSize;
             })
             .addCase(fetchPaginatedManga.rejected, (state, action) => {
                 state.loading = false;
@@ -92,6 +103,13 @@ const mangaSlice = createSlice({
             .addCase(fetchMangaById.rejected, (state, action) => {
                 state.loadingMangaDetail = false;
                 state.detailError = action.payload as string;
+            })
+            .addCase(fetchMangaNew.fulfilled, (state, action: PayloadAction<MangaResponse>) => {
+                state.loading = false;
+                state.mangaList = action.payload.result.content;
+                state.totalPages = action.payload.result.totalPages;
+                state.totalElements = action.payload.result.totalElements;
+                state.currentPage = action.payload.result.currentPage + 1;
             });
     }
 });
