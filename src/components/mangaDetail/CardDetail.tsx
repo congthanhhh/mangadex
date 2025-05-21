@@ -1,5 +1,6 @@
 import { Button, Col, Rate, Row, Tag, Input } from "antd"
 import { useEffect, useState } from "react"
+import { format, parseISO } from 'date-fns';
 import { UsergroupAddOutlined, StarFilled, EyeFilled, HeartFilled, BellFilled, TagOutlined, EyeTwoTone } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
 import ShowMoreLess from "./ShowMoreLess";
@@ -188,7 +189,8 @@ const CardDetail = () => {
                                                     buttonClassName="w-full h-11 rounded-md text-sm px-4 border-2"
                                                     renderItem={(item) => (
                                                         <Col lg={8} md={8} sm={12} xs={24} key={item.id} className="p-2 py-1 cursor-pointer">
-                                                            <a onClick={() => navigate(`/chapter/${item.id}/chapter-number/${item.chapterNumber}`)} className="w-full flex items-center bg-neutral-300 p-1 rounded hover:opacity-65 hover:text-slate-500">
+                                                            <a onClick={() => navigate(`/chapter/${item.id}/chapter-number/${item.chapterNumber}`)}
+                                                                className="w-full flex items-center bg-neutral-300 p-1 rounded hover:opacity-65 hover:text-slate-500">
                                                                 <div className=" flex items-center rounded-md bg-red-300 w-12 h-14 justify-center">
                                                                     <EyeTwoTone twoToneColor='#f33' className="text-base" />
                                                                 </div>
@@ -198,11 +200,13 @@ const CardDetail = () => {
                                                                     </div>
                                                                     <div className="flex justify-between text-xs text-slate-500 font-sans">
                                                                         <div>
-                                                                            <span>30-01-2025</span>
+                                                                            <span>{item.releaseDate
+                                                                                ? format(parseISO(item.releaseDate), 'MM-dd-yyyy')
+                                                                                : ''}</span>
                                                                         </div>
                                                                         <div>
                                                                             <EyeFilled />
-                                                                            <span className="pl-1">20.000</span>
+                                                                            <span className="pl-1">{item.viewCount}</span>
                                                                         </div>
                                                                     </div>
                                                                 </div>

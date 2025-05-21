@@ -1,9 +1,10 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { Chapter, getPaginatedChaptersAPI } from '../../services/chapterService';
+import { Chapter, ReadingHistory, getPaginatedChaptersAPI, getReadingHistoryAPI, increaseViewCountAPI } from '../../services/chapterService';
 
 interface ChapterState {
     chapters: Chapter[];
     currentChapter: Chapter | null;
+    readingHistory: ReadingHistory[];
     loading: boolean;
     error: string | null;
 }
@@ -11,6 +12,7 @@ interface ChapterState {
 const initialState: ChapterState = {
     chapters: [],
     currentChapter: null,
+    readingHistory: [],
     loading: false,
     error: null
 };
@@ -27,16 +29,30 @@ export const fetchChaptersByMangaId = createAsyncThunk(
     }
 );
 
+export const increaseViewCount = createAsyncThunk(
+    'chapter/increaseViewCount',
+    async (chapterId: number, { rejectWithValue }) => {
+        try {
+            await increaseViewCountAPI(chapterId);
+            return chapterId;
+        } catch (error) {
+            return rejectWithValue('Failed to increase view count');
+        }
+    }
+);
+
 const chapterSlice = createSlice({
     name: 'chapter',
-    initialState,
-    reducers: {
+    initialState, reducers: {
         setCurrentChapter: (state, action: PayloadAction<Chapter>) => {
             state.currentChapter = action.payload;
         },
         clearChapters: (state) => {
             state.chapters = [];
             state.currentChapter = null;
+        },
+        clearReadingHistory: (state) => {
+            state.readingHistory = [];
         }
     },
     extraReducers: (builder) => {
@@ -55,9 +71,12 @@ const chapterSlice = createSlice({
             .addCase(fetchChaptersByMangaId.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload as string;
-            });
+            })
+            .addCase(increaseViewCount.fulfilled, () => {
+                // We don't need to update any state here as this just increments the view count on the server
+            })
     }
 });
 
-export const { setCurrentChapter, clearChapters } = chapterSlice.actions;
+export const { setCurrentChapter, clearChapters, clearReadingHistory } = chapterSlice.actions;
 export default chapterSlice.reducer;

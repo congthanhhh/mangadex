@@ -6,6 +6,8 @@ import Comment from "../mangaDetail/Comment"
 import { useParams, NavLink } from "react-router-dom"
 import { useAppDispatch, useAppSelector } from "../../store/hooks"
 import { fetchPagesByChapterId } from "../../store/slice/pageSlice"
+import { increaseViewCount } from "../../store/slice/chapterSlice"
+
 
 
 const Chapter = () => {
@@ -39,11 +41,10 @@ const Chapter = () => {
     };
 
     const dispatch = useAppDispatch();
-    const { pages } = useAppSelector(state => state.page);
-
-    useEffect(() => {
+    const { pages } = useAppSelector(state => state.page); useEffect(() => {
         if (id) {
             dispatch(fetchPagesByChapterId(Number(id)));
+            dispatch(increaseViewCount(Number(id)));
         }
 
         fetchComment();

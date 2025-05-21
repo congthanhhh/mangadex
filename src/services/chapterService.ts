@@ -27,3 +27,32 @@ export const getPaginatedChaptersAPI = async (mangaId: string): Promise<Chapter[
         throw error;
     }
 }
+
+export interface ReadingHistory {
+    id: number;
+    userId: string;
+    chapterId: number;
+    chapterTitle: string;
+    startDate: string;
+    lastReadPageNumber: number;
+    lastViewDate: string;
+}
+
+export const getReadingHistoryAPI = async (chapterId: number): Promise<ReadingHistory[]> => {
+    try {
+        const response = await axiosInstance.post(`/chapter/reading-history/${chapterId}`);
+        return response.data.result;
+    } catch (error) {
+        console.error("Error fetching reading history:", error);
+        throw error;
+    }
+}
+
+export const increaseViewCountAPI = async (chapterId: number): Promise<void> => {
+    try {
+        await axiosInstance.post(`/chapter/increase-view/${chapterId}`);
+    } catch (error) {
+        console.error("Error increasing view count:", error);
+        throw error;
+    }
+}
