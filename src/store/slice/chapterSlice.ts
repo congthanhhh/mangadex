@@ -1,8 +1,9 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { Chapter, ReadingHistory, getPaginatedChaptersAPI, getReadingHistoryAPI, increaseViewCountAPI } from '../../services/chapterService';
+import { Chapter, ReadingHistory, getPaginatedChaptersAPI, getTop2ChaptersAPI, increaseViewCountAPI } from '../../services/chapterService';
 
 interface ChapterState {
     chapters: Chapter[];
+    chaptersByMangaId: Record<string, Chapter[]>;
     currentChapter: Chapter | null;
     readingHistory: ReadingHistory[];
     loading: boolean;
@@ -11,6 +12,7 @@ interface ChapterState {
 
 const initialState: ChapterState = {
     chapters: [],
+    chaptersByMangaId: {},
     currentChapter: null,
     readingHistory: [],
     loading: false,
@@ -22,7 +24,18 @@ export const fetchChaptersByMangaId = createAsyncThunk(
     async (mangaId: string, { rejectWithValue }) => {
         try {
             const response = await getPaginatedChaptersAPI(mangaId);
-            return response;
+            return { mangaId, chapters: response };
+        } catch (error) {
+            return rejectWithValue('Failed to fetch chapters');
+        }
+    }
+);
+export const fetchTop2ChaptersByMangaId = createAsyncThunk(
+    'top2Chapter/fetchByMangaId',
+    async (mangaId: string, { rejectWithValue }) => {
+        try {
+            const response = await getTop2ChaptersAPI(mangaId);
+            return { mangaId, chapters: response };
         } catch (error) {
             return rejectWithValue('Failed to fetch chapters');
         }
@@ -44,16 +57,11 @@ export const increaseViewCount = createAsyncThunk(
 const chapterSlice = createSlice({
     name: 'chapter',
     initialState, reducers: {
-        setCurrentChapter: (state, action: PayloadAction<Chapter>) => {
-            state.currentChapter = action.payload;
-        },
         clearChapters: (state) => {
             state.chapters = [];
+            state.chaptersByMangaId = {};
             state.currentChapter = null;
         },
-        clearReadingHistory: (state) => {
-            state.readingHistory = [];
-        }
     },
     extraReducers: (builder) => {
         builder
@@ -61,22 +69,21 @@ const chapterSlice = createSlice({
                 state.loading = true;
                 state.error = null;
             })
-            .addCase(fetchChaptersByMangaId.fulfilled, (state, action: PayloadAction<Chapter[]>) => {
+            .addCase(fetchChaptersByMangaId.fulfilled, (state, action: PayloadAction<{ mangaId: string, chapters: Chapter[] }>) => {
                 state.loading = false;
-                state.chapters = action.payload;
-                if (action.payload.length > 0 && !state.currentChapter) {
-                    state.currentChapter = action.payload[0];
-                }
+                state.chapters = action.payload.chapters;
+                state.chaptersByMangaId[action.payload.mangaId] = action.payload.chapters;
             })
             .addCase(fetchChaptersByMangaId.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload as string;
             })
-            .addCase(increaseViewCount.fulfilled, () => {
-                // We don't need to update any state here as this just increments the view count on the server
+            .addCase(fetchTop2ChaptersByMangaId.fulfilled, (state, action: PayloadAction<{ mangaId: string, chapters: Chapter[] }>) => {
+                state.loading = false;
+                state.chaptersByMangaId[action.payload.mangaId] = action.payload.chapters;
             })
     }
 });
 
-export const { setCurrentChapter, clearChapters, clearReadingHistory } = chapterSlice.actions;
+export const { clearChapters } = chapterSlice.actions;
 export default chapterSlice.reducer;

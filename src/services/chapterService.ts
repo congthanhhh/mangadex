@@ -28,6 +28,16 @@ export const getPaginatedChaptersAPI = async (mangaId: string): Promise<Chapter[
     }
 }
 
+export const getTop2ChaptersAPI = async (mangaId: string): Promise<Chapter[]> => {
+    try {
+        const response = await axiosInstance.get(`/chapter/top2/${mangaId}`);
+        return response.data.result;
+    } catch (error) {
+        console.error("Error fetching top2 chapters:", error);
+        throw error;
+    }
+}
+
 export interface ReadingHistory {
     id: number;
     userId: string;
@@ -36,16 +46,6 @@ export interface ReadingHistory {
     startDate: string;
     lastReadPageNumber: number;
     lastViewDate: string;
-}
-
-export const getReadingHistoryAPI = async (chapterId: number): Promise<ReadingHistory[]> => {
-    try {
-        const response = await axiosInstance.post(`/chapter/reading-history/${chapterId}`);
-        return response.data.result;
-    } catch (error) {
-        console.error("Error fetching reading history:", error);
-        throw error;
-    }
 }
 
 export const increaseViewCountAPI = async (chapterId: number): Promise<void> => {

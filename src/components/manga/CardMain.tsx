@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Card, Col, Row, Tooltip } from "antd";
 import PaginationManga from "../pagination/PaginationManga";
 import { CodepenCircleOutlined, EyeFilled, UsergroupAddOutlined } from "@ant-design/icons";
@@ -8,24 +8,43 @@ import CardProposal from "./CardProposal";
 import CarouselItem from "./CarouselItem";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { fetchPaginatedManga, setCurrentPage } from "../../store/slice/mangaSlice";
+import { fetchPaginatedManga } from "../../store/slice/mangaSlice";
+import { fetchTop2ChaptersByMangaId } from "../../store/slice/chapterSlice";
+import { formatDistanceToNow } from 'date-fns';
+import { vi } from 'date-fns/locale';
 
 const CardMain = () => {
     const navigate = useNavigate();
-    const dispatch = useAppDispatch();
-    const pageSize = 5; // Number of items per page
+    const dispatch = useAppDispatch(); const pageSize = 7;
+    // Local state for pagination
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPagesMain, setTotalPagesMain] = useState(0);
 
-    // Get manga state from Redux store
-    const { mangaList, totalPages, currentPage, loading } = useAppSelector(state => state.manga);
-
-    // Fetch manga data when component mounts or when page changes
+    const { mangaList, loading } = useAppSelector(state => state.manga);
+    const { chaptersByMangaId } = useAppSelector(state => state.chapter);    // Fetch manga data when component mounts or when page changes
     useEffect(() => {
-        dispatch(fetchPaginatedManga({ page: currentPage, pageSize }));
+        dispatch(fetchPaginatedManga({ page: currentPage, pageSize }))
+            .unwrap()
+            .then(response => {
+                setTotalPagesMain(response.result.totalPages);
+            })
+            .catch(error => {
+                console.error("Error fetching manga:", error);
+            });
     }, [dispatch, currentPage, pageSize]);
+
+    // Fetch top 2 chapters for each manga when manga list changes
+    useEffect(() => {
+        if (mangaList.length > 0) {
+            mangaList.forEach(manga => {
+                dispatch(fetchTop2ChaptersByMangaId(manga.id));
+            });
+        }
+    }, [mangaList, dispatch]);
 
     // Handle page change
     const handlePageChange = (page: number) => {
-        dispatch(setCurrentPage(page));
+        setCurrentPage(page);
     };
 
     return (
@@ -64,25 +83,22 @@ const CardMain = () => {
                                                     <span>{item.title}</span>
                                                 </a>
                                             </Tooltip>
-                                        }
-                                        description={
+                                        } description={
                                             <div className="relative">
                                                 <div className="absolute bg-gray-400 opacity-50 w-[1px] h-full left-[10px] bottom-0"></div>
-                                                <a className="text-sm text-gray-500 flex items-center hover:text-red-700 hover:fill-red-700">
-                                                    <div className="z-[1]"><CodepenCircleOutlined style={{ fontSize: '20px' }} /></div>
-                                                    <div className="flex flex-col pl-3 pb-2">
-                                                        <span className="text-sm font-medium">21</span>
-                                                        <span className="text-xs">1 giờ trước</span>
-                                                    </div>
-                                                </a>
-                                                <a className="text-sm text-gray-500 flex items-center hover:text-red-700 hover:fill-red-700">
-                                                    <div className="z-[1]"><CodepenCircleOutlined style={{ fontSize: '20px' }} /></div>
-                                                    <div className="flex flex-col pl-3 pb-2">
-                                                        <span className="text-sm font-medium">21</span>
-                                                        <span className="text-xs">1 giờ trước</span>
-                                                    </div>
-                                                </a>
-
+                                                {chaptersByMangaId[item.id]?.map((chap) => (
+                                                    <a key={chap.id} className="text-sm text-gray-500 flex items-center hover:text-red-700 hover:fill-red-700">
+                                                        <div className="z-[1]"><CodepenCircleOutlined style={{ fontSize: '20px' }} /></div>
+                                                        <div className="flex flex-col pl-3 pb-2">
+                                                            <span className="text-sm font-medium">{chap.chapterNumber}</span>
+                                                            <span className="text-xs">
+                                                                {chap.releaseDate
+                                                                    ? formatDistanceToNow(new Date(chap.releaseDate), { addSuffix: true, locale: vi })
+                                                                    : "N/A"}
+                                                            </span>
+                                                        </div>
+                                                    </a>
+                                                ))}
                                             </div>
                                         } />
                                 </Card>
@@ -95,7 +111,7 @@ const CardMain = () => {
                 <div className="flex items-center">
                     <hr className="block flex-1 border border-gray-30 border-opacity-30 border-solid transition max-w-full" />
                     <PaginationManga
-                        totalPages={totalPages}
+                        totalPages={totalPagesMain}
                         postsPerPage={pageSize}
                         currentPage={currentPage}
                         handlePageChange={handlePageChange}
