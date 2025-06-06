@@ -1,16 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { Spin, message } from "antd";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { googleAuthenticate, getUserInfo } from "../../store/slice/authSlice";
 
 const Authenticate = () => {
     const navigate = useNavigate();
-    const [isLoggedin, setIsLoggedin] = useState(false);
-
-    //--------------------------------------------------------------------------- 
-    const KEY_TOKEN = "accessToken";
-    const setToken = (token: any) => { localStorage.setItem(KEY_TOKEN, token); };
-    const getToken = () => { return localStorage.getItem(KEY_TOKEN); };
-    const removeToken = () => { return localStorage.removeItem(KEY_TOKEN); };
-    // ---------------------------------------------------------------------------
+    const dispatch = useAppDispatch();
+    const { isAuthenticated, loading, error } = useAppSelector((state) => state.auth);
 
     useEffect(() => {
         const authCodeRegex = /code=([^&]+)/;
@@ -18,32 +15,36 @@ const Authenticate = () => {
 
         if (isMatch) {
             const authCode = isMatch[1];
-
-            fetch(
-                `http://localhost:8080/comic/auth/outbound/authentication?code=${authCode}`,
-                {
-                    method: "POST",
-                }
-            )
-                .then((response) => {
-                    return response.json();
-                })
-                .then((data) => {
-                    console.log(data);
-
-                    setToken(data.result?.token);
-                    setIsLoggedin(true);
-                });
+            dispatch(googleAuthenticate(authCode));
         }
-    }, []);
+    }, [dispatch]);
 
     useEffect(() => {
-        if (isLoggedin) {
-            navigate("/home-profile");
+        if (error) {
+            message.error(error);
         }
-    }, [isLoggedin, navigate]);
-    return (
-        <div>Authenticate.......</div>
+    }, [error]);
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            // dispatch(getUserInfo());
+            navigate("/trang-chu");
+        }
+    }, [isAuthenticated, navigate, dispatch]); return (
+        <div>
+            {loading && (
+                <Spin
+                    tip="Authenticating..."
+                    size="large"
+                    style={{
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                    }}
+                />
+            )}
+        </div>
     )
 }
 

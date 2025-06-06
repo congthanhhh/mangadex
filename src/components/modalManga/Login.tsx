@@ -1,147 +1,126 @@
 import { GoogleOutlined } from '@ant-design/icons';
-import { Button, Checkbox, Form, Input, Modal } from 'antd'
+import { Button, Checkbox, Form, Input, Modal, message } from 'antd'
 import { ModelLoginProps } from '../../types/AuthTypes';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { getUserInfo, login } from '../../store/slice/authSlice';
+import { OAuthConfig } from '../../utils/tokenUtils';
+
+type FieldType = {
+    username?: string;
+    password?: string;
+    remember?: string;
+};
 
 const Login = (props: ModelLoginProps) => {
     const { isOpenLogin, handleCancel } = props;
-    //--------------------------------------------------------------------------- 
-    const KEY_TOKEN = "accessToken";
-    const setToken = (token: any) => { localStorage.setItem(KEY_TOKEN, token); };
-    const getToken = () => { return localStorage.getItem(KEY_TOKEN); };
-    const removeToken = () => { return localStorage.removeItem(KEY_TOKEN); };
-    // ---------------------------------------------------------------------------
+    const dispatch = useAppDispatch();
+    const { loading, error, isAuthenticated } = useAppSelector((state) => state.auth);
+
+    // Form state
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");    // Check if user is authenticated and redirect if needed
+    useEffect(() => {
+        if (isAuthenticated) {
+            // Fetch user information after successful login
+            dispatch(getUserInfo());
+            handleCancel();
+        }
+    }, [isAuthenticated, handleCancel, dispatch]);
 
     const handleContinueGoogle = () => {
-        const callbackUrl = "http://localhost:5173/authenticate";
-        const authUrl = "https://accounts.google.com/o/oauth2/auth";
-        const googleClientId = "285017198166-v3bg04pi6vb53fve3homa4o6le3taskd.apps.googleusercontent.com";
-
-        const targetUrl = `${authUrl}?redirect_uri=${encodeURIComponent(
-            callbackUrl
-        )}&response_type=code&client_id=${googleClientId}&scope=openid%20email%20profile`;
-
-        console.log(targetUrl);
+        const { clientId, redirectUri, authUri } = OAuthConfig;
+        const targetUrl = `${authUri}?redirect_uri=${encodeURIComponent(
+            redirectUri
+        )}&response_type=code&client_id=${clientId}&scope=openid%20email%20profile`;
 
         window.location.href = targetUrl;
     };
 
-    // -----------------Login-----------------------
-    const navigate = useNavigate();
-    type FieldType = {
-        username?: string;
-        password?: string;
-        remember?: string;
-    };
-    interface LoginData {
-        username: string;
-        password: string;
-    }
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    interface LoginResponse {
-        result?: {
-            token?: string;
-        };
-    }
+    // Handle login with Redux
     const handleLogin = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
 
-        const data: LoginData = {
-            username: username,
-            password: password,
-        };
+        if (!username || !password) {
+            message.error('Please enter both username and password');
+            return;
+        }
 
-        fetch(`http://localhost:8080/comic/auth/token`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-        })
-            .then((response): Promise<LoginResponse> => {
-                return response.json();
-            })
-            .then((data: LoginResponse) => {
-                console.log(data);
-                setToken(data.result?.token);
-            });
+        dispatch(login({ username, password }));
     };
 
+    // Show error message if login fails
     useEffect(() => {
-        const accessToken = getToken();
-
-        if (accessToken) {
-            navigate("/home-profile");
+        if (error) {
+            message.error(error);
         }
-    }, [navigate]);
-    //------------------------------------------------ 
+    }, [error]);
 
     return (
-        <>
-            <Modal style={{ top: 60 }}
-                width={{
-                    xs: '70%',
-                    sm: '40%',
-                    md: '35%',
-                    lg: '30%',
-                    xl: '20%',
-                }}
-                title={<div className='text-xl shadow-md p-1'>Đăng Nhập</div>}
-                open={isOpenLogin} onCancel={handleCancel} footer={null}>
-                <div className='flex flex-col items-center'>
-                    <div className='mt-1'>
-                        <Button icon={<GoogleOutlined />}
-                            size='large' color='primary'
-                            variant='solid' onClick={handleContinueGoogle}>
-                            Đăng nhập với Google
-                        </Button>
-                    </div>
-
-                    <div className='mt-1 text-red-600 underline'>
-                        <a>Privacy Policy</a>
-                    </div>
-
+        <Modal width={{
+            xs: '70%',
+            sm: '40%',
+            md: '35%',
+            lg: '30%',
+            xl: '20%',
+        }} open={isOpenLogin} onCancel={handleCancel} footer={null}>
+            <div className='px-8'>
+                <div className='mt-5'>
+                    <Button
+                        icon={<GoogleOutlined />}
+                        htmlType="button"
+                        className='bg-slate-200 text-slate-800 w-full h-10 hover:opacity-50'
+                        variant='solid' onClick={handleContinueGoogle}>
+                        Tiếp tục với Google
+                    </Button>
                 </div>
-                {/* -----------------Login----------------------- */}
+                <div className='flex items-center gap-3 my-5'>
+                    <hr className='w-full border-t-2 border-gray-300' />
+                    <div className='text-gray-500'>Hoặc</div>
+                    <hr className='w-full border-t-2 border-gray-300' />
+                </div>
                 <Form
                     name="basic"
-                    labelCol={{ span: 8 }}
-                    wrapperCol={{ span: 16 }}
                     style={{ maxWidth: 600 }}
                     initialValues={{ remember: true }}
                     autoComplete="off"
                 >
-                    <Form.Item<FieldType>
-                        label="Username"
-                        name="username"
-                        rules={[{ required: true, message: 'Please input your username!' }]}
-                    >
-                        <Input value={username} onChange={(e) => setUsername(e.target.value)} />
+                    <Form.Item<FieldType>>
+
+                        <Input placeholder='Username' onChange={(e) => setUsername(e.target.value)} />
+                    </Form.Item>
+
+                    <Form.Item<FieldType>>
+
+                        <Input.Password placeholder='password' onChange={(e) => setPassword(e.target.value)} />
                     </Form.Item>
 
                     <Form.Item<FieldType>
-                        label="Password"
-                        name="password"
-                        rules={[{ required: true, message: 'Please input your password!' }]}
+                        name="remember"
+                        valuePropName="checked"
                     >
-                        <Input.Password value={password} onChange={(e) => setPassword(e.target.value)} />
+                        <div className='flex justify-between'>
+                            <Checkbox className='mb-0'>Lưu mật khẩu</Checkbox>
+                            <a className='ml-auto text-blue-600' href="">Quên mật khẩu?</a>
+                        </div>
                     </Form.Item>
 
-                    <Form.Item<FieldType> name="remember" valuePropName="checked" label={null}>
-                        <Checkbox>Remember me</Checkbox>
-                    </Form.Item>
-
-                    <Form.Item label={null}>
-                        <Button type="primary" htmlType="submit" onClick={handleLogin}>
-                            Submit
+                    <Form.Item>
+                        <Button type="primary" htmlType="submit" className="w-full h-10 bg-sky-500"
+                            onClick={handleLogin} loading={loading}>
+                            Đăng nhập
                         </Button>
                     </Form.Item>
+                    <div className='text-center mt-2'>
+                        <div>Chưa có tài khoản?
+                            <a href="#" className='text-blue-600 ml-1 hover:text-red-700'>
+                                Đăng ký
+                            </a>
+                        </div>
+                    </div>
                 </Form>
-                {/* login-------------------------------------- */}
-            </Modal>
-        </>
+            </div>
+        </Modal>
     )
 }
 
