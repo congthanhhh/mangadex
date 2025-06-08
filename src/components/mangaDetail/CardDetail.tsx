@@ -11,6 +11,7 @@ import { fetchMangaById } from "../../store/slice/mangaSlice";
 
 
 const CardDetail = () => {
+    const [chapterInput, setChapterInput] = useState("");
     const [comment, setComment] = useState([]);
     const [replyComment, setReplyComment] = useState([]);
     const LIMIT_MANGA = 21;
@@ -40,6 +41,34 @@ const CardDetail = () => {
             setReplyComment(data)
         } catch (error) {
             console.error("Error fetching data:", error);
+        }
+    }; const handleGoToChapter = () => {
+        if (!chapterInput || !chapters || chapters.length === 0) return;
+
+        const chapterNumber = parseInt(chapterInput);
+        if (isNaN(chapterNumber)) return;
+
+        // Find the chapter with the matching chapter number
+        const chapter = chapters.find(ch => ch.chapterNumber === chapterNumber);
+        if (chapter) {
+            navigate(`/chapter/${chapter.id}/chapter-number/${chapter.chapterNumber}`);
+        } else {
+            // Alert or some feedback that the chapter wasn't found could be added here
+            console.log(`Chapter ${chapterNumber} not found`);
+        }
+    };
+
+    const handleReadFromBeginning = () => {
+        if (!chapters || chapters.length === 0) return;
+
+        // Sort chapters by chapter number to find the first one
+        const sortedChapters = [...chapters].sort((a, b) => a.chapterNumber - b.chapterNumber);
+        const firstChapter = sortedChapters[0];
+
+        if (firstChapter) {
+            navigate(`/chapter/${firstChapter.id}/chapter-number/${firstChapter.chapterNumber}`);
+        } else {
+            console.log("No chapters available");
         }
     };
 
@@ -114,13 +143,13 @@ const CardDetail = () => {
                                     Thông Báo
                                 </Button>
                             </div>
-                        </div>
-                        <div className="mt-3 mx-auto min-w-[300px] max-w-full">
+                        </div>                        <div className="mt-3 mx-auto min-w-[300px] max-w-full">
                             <div className="mx-2">
                                 <Button
                                     color="default"
                                     variant="filled" size="large"
                                     className="w-full"
+                                    onClick={handleReadFromBeginning}
                                 >Đọc Từ Đầu
                                 </Button>
                             </div>
@@ -169,8 +198,14 @@ const CardDetail = () => {
                                         <div className='flex items-center pr-3 pt-3'>
                                             <div className='h-9 min-w-16 px-4 pt-1 text-xl font-normal'>Danh Sách</div>
                                             <hr className="block flex-1 border mr-2 border-black border-opacity-10 border-solid transition max-w-full" />
-                                            <Button className="mx-1">ĐI TỚI</Button>
-                                            <Input placeholder="CHƯƠNG" className="w-[90px] mx-1" />
+                                            <Button className="mx-1" onClick={handleGoToChapter}>ĐI TỚI</Button>
+                                            <Input
+                                                placeholder="CHƯƠNG"
+                                                className="w-[90px] mx-1"
+                                                value={chapterInput}
+                                                onChange={(e) => setChapterInput(e.target.value)}
+                                                onPressEnter={handleGoToChapter}
+                                            />
                                         </div>
                                         <Row className="p-4">
                                             {loading ? (
