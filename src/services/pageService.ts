@@ -1,11 +1,5 @@
 import axiosInstance from "../utils/axiosInstance";
-
-export interface Page {
-    titleComic: string;
-    chapterNumber: number;
-    pageNumber: number;
-    imageUrl: string;
-}
+import { Page } from "../types/pageTypes";
 
 export const getPagesByChapterIdAPI = async (chapterId: string): Promise<Page[]> => {
     try {

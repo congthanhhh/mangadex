@@ -8,41 +8,48 @@ import Comment from "./Comment";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { fetchChaptersByMangaId } from "../../store/slice/chapterSlice";
 import { fetchMangaById } from "../../store/slice/mangaSlice";
+import { fetchRootComments, fetchAllRepliesForComments, fetchRepliesForComment, clearComments } from "../../store/slice/commentSlice";
 
 
 const CardDetail = () => {
     const [chapterInput, setChapterInput] = useState("");
-    const [comment, setComment] = useState([]);
-    const [replyComment, setReplyComment] = useState([]);
     const LIMIT_MANGA = 21;
     const LIMIT_COMMENT = 10;
-    const LIMIT_REPCOMMENT = 4;
+    const LIMIT_REPLIES = 2;
     const navigate = useNavigate();
 
-    const { id } = useParams();
+    const { id } = useParams(); // comicId
 
     const dispatch = useAppDispatch();
     const { chapters, loading, error } = useAppSelector(state => state.chapter);
     const { selectedManga } = useAppSelector(state => state.manga);
+    const { rootComments, replies, loading: commentLoading, error: commentError } = useAppSelector(state => state.comment);
 
     const fetchComment = async () => {
+        if (!id) return;
+
         try {
-            const res = await fetch(`https://jsonplaceholder.typicode.com/posts`);
-            const data = await res.json();
-            setComment(data)
+            // Fetch root comments first
+            const resultAction = await dispatch(fetchRootComments(id));
+
+            // If successful, fetch all replies
+            if (fetchRootComments.fulfilled.match(resultAction)) {
+                const rootCommentsData = resultAction.payload;
+                if (Array.isArray(rootCommentsData) && rootCommentsData.length > 0) {
+                    dispatch(fetchAllRepliesForComments(rootCommentsData));
+                }
+            }
         } catch (error) {
-            console.error("Error fetching data:", error);
+            console.error("Error fetching comments:", error);
         }
+    }
+
+    // Function to fetch replies for a specific comment
+    const fetchRepliesForCommentHandler = async (commentId: number) => {
+        dispatch(fetchRepliesForComment(commentId));
     };
-    const fetchReplyComment = async () => {
-        try {
-            const res = await fetch(`https://jsonplaceholder.typicode.com/users`);
-            const data = await res.json();
-            setReplyComment(data)
-        } catch (error) {
-            console.error("Error fetching data:", error);
-        }
-    }; const handleGoToChapter = () => {
+
+    const handleGoToChapter = () => {
         if (!chapterInput || !chapters || chapters.length === 0) return;
 
         const chapterNumber = parseInt(chapterInput);
@@ -74,11 +81,12 @@ const CardDetail = () => {
 
     useEffect(() => {
         if (id) {
+            // Clear previous comments when manga changes
+            dispatch(clearComments());
             dispatch(fetchChaptersByMangaId(id));
             dispatch(fetchMangaById(id));
+            fetchComment();
         }
-        fetchComment();
-        fetchReplyComment();
     }, [id, dispatch]);
 
     return (
@@ -262,11 +270,22 @@ const CardDetail = () => {
                     </Col>
                 </Row>
                 <Comment
-                    dataComment={comment}
-                    dataReply={replyComment}
+                    dataComment={rootComments}
+                    dataReply={replies}
                     LIMIT_COMMENT={LIMIT_COMMENT}
-                    LIMIT_REPCOMMENT={LIMIT_REPCOMMENT}
+                    LIMIT_REPLIES={LIMIT_REPLIES}
+                    onFetchReplies={fetchRepliesForCommentHandler}
                 />
+                {commentLoading && (
+                    <div className="text-center p-4">
+                        Đang tải bình luận...
+                    </div>
+                )}
+                {commentError && (
+                    <div className="text-center p-4 text-red-500">
+                        Lỗi: {commentError}
+                    </div>
+                )}
             </div>
 
         </div>

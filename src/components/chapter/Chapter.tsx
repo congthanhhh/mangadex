@@ -17,7 +17,7 @@ const Chapter = () => {
     const [comment, setComment] = useState([]);
     const [replyComment, setReplyComment] = useState([]);
     const LIMIT_COMMENT = 10;
-    const LIMIT_REPCOMMENT = 4;
+    const LIMIT_REPLIES = 4;
 
     const { id, chapterNumber } = useParams();
 
@@ -150,7 +150,7 @@ const Chapter = () => {
                 dataComment={comment}
                 dataReply={replyComment}
                 LIMIT_COMMENT={LIMIT_COMMENT}
-                LIMIT_REPCOMMENT={LIMIT_REPCOMMENT} />
+                LIMIT_REPLIES={LIMIT_REPLIES} />
             <SelectChapter
                 isOpenChapter={isOpenChapter}
                 handleCancel={handleCancel} />

@@ -1,32 +1,56 @@
 import { Button, Input } from "antd"
 import { useState } from "react";
 import ShowMoreLess from "./ShowMoreLess";
+import { formatDistanceToNow } from "date-fns";
+import { vi } from "date-fns/locale";
+import { IRootComment, IRePlyComment, CommentProps } from "../../types/commentTypes";
 const { TextArea } = Input;
-
-interface IComment {
-    id: number;
-    userId: number
-    title: string;
-    body: string;
-}
-interface IRePlyComment {
-    id: number;
-    username: string;
-}
-
-interface CommentProps {
-    dataComment: IComment[];
-    dataReply: IRePlyComment[];
-    LIMIT_COMMENT: number;
-    LIMIT_REPCOMMENT: number;
-}
 
 const Comment = (props: CommentProps) => {
 
-    const { dataComment, LIMIT_COMMENT, dataReply, LIMIT_REPCOMMENT } = props;
+    const { dataComment, LIMIT_COMMENT, dataReply, LIMIT_REPLIES, onFetchReplies } = props;
 
     const [isVisible, setIsVisible] = useState<Record<number, boolean>>({});
     const [isVisible2, setIsVisible2] = useState<Record<number, boolean>>({});
+
+    // Function to flatten nested replies into a single array with parent info
+    const flattenReplies = (replies: IRePlyComment[], rootComment?: IRootComment): (IRePlyComment & { replyToUser?: string })[] => {
+        const result: (IRePlyComment & { replyToUser?: string })[] = [];
+
+        // Create a map of all comments (root + replies) for quick lookup
+        const commentMap = new Map<number, { userName: string }>();
+
+        // Add root comment to map
+        if (rootComment) {
+            commentMap.set(rootComment.commentId, { userName: rootComment.userName });
+        }
+
+        // Add all replies to map first
+        const addToMap = (repliesArray: IRePlyComment[]) => {
+            for (const reply of repliesArray) {
+                commentMap.set(reply.commentId, { userName: reply.userName });
+                if (reply.replies && reply.replies.length > 0) {
+                    addToMap(reply.replies);
+                }
+            }
+        };
+        addToMap(replies);
+
+        const flatten = (repliesArray: IRePlyComment[], parentId?: number) => {
+            for (const reply of repliesArray) {
+                const replyToUser = parentId ? commentMap.get(parentId)?.userName : undefined;
+                result.push({ ...reply, replyToUser });
+
+                if (reply.replies && reply.replies.length > 0) {
+                    flatten(reply.replies, reply.commentId);
+                }
+            }
+        };
+
+        // Start flattening, first level replies to root comment
+        flatten(replies, rootComment?.commentId);
+        return result;
+    };
 
     const handleShowTextArea = (id: number) => {
         setIsVisible((prev) => ({
@@ -65,29 +89,35 @@ const Comment = (props: CommentProps) => {
                         className="pt-2"
                         buttonClassName="w-full h-11 rounded-md text-sm px-4 border-2"
                         renderItem={(item) => (
-                            <div key={item.id}>
+                            <div key={item.commentId}>
                                 {/* Comment */}
                                 <div className="px-1 py-1 flex items-center">
                                     <div className="capitalize mr-1 text-pink-600">
-                                        Naruto
-                                        <span className="ml-1 text-blue-600">Chương 20</span>
+                                        <span className="font-semibold">{item.userName}</span>
+                                        {item.chapterNumber &&
+                                            <span className="ml-1 text-blue-600">{"Chương " + item.chapterNumber}</span>
+                                        }
                                     </div>
-                                    <div className="text-xs text-neutral-500">3 giờ trước</div>
+                                    <div className="text-xs text-neutral-500">
+                                        {item.createdDate
+                                            ? formatDistanceToNow(new Date(item.createdDate), { addSuffix: true, locale: vi })
+                                            : "N/A"}
+                                    </div>
                                 </div>
                                 <div className="bg-neutral-300 p-2 rounded-md">
-                                    Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+                                    {item.content}
                                 </div>
                                 <div className="capitalize text-xs text-neutral-500">
-                                    <span onClick={() => handleShowTextArea(item.id)}
+                                    <span onClick={() => handleShowTextArea(item.commentId)}
                                         className="px-1 cursor-pointer hover:opacity-60">trả lời</span>
                                     <span className="px-1 cursor-pointer hover:opacity-60">báo cáo</span>
                                     <span className="px-1 cursor-pointer hover:opacity-60">tag tên</span>
-                                    {isVisible[item.id] && (
+                                    {isVisible[item.commentId] && (
                                         <div className="relative w-[96%] m-auto">
                                             <TextArea size="large"
                                                 autoSize={{ minRows: 2, maxRows: 3 }}
                                                 styles={{ textarea: { paddingRight: 90 } }}
-                                                placeholder={`Trả lời ${item.title}`} />
+                                                placeholder={`Trả lời ${item.userName}`} />
                                             <Button
                                                 color="blue" size="middle"
                                                 className="absolute right-4 top-2"
@@ -96,47 +126,76 @@ const Comment = (props: CommentProps) => {
                                     )}
                                 </div>
                                 {/* Reply */}
-                                <ShowMoreLess
-                                    data={dataReply}
-                                    initialVisible={LIMIT_REPCOMMENT}
-                                    incremental={true}
-                                    step={4}
-                                    className="pb-2 w-1/4 m-auto"
-                                    buttonClassName="w-full h-6 rounded-md text-xs px-4 border-2"
-                                    renderItem={(item) => (
-                                        <div className="pl-6 font-sans" key={item.id}>
-                                            <div className="px-1 py-1 flex items-center">
-                                                <div className="capitalize mr-1 text-pink-600">
-                                                    {item.username}
-                                                </div>
-                                                <div className="text-xs text-neutral-500">2 giờ trước</div>
-                                            </div>
-                                            <div className="bg-neutral-300 p-2 rounded-md">
-                                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum repellendus perspiciatis aliquid minima maxime sint perferendis, corporis illo saepe eaque!
-                                            </div>
-                                            <div className="capitalize text-xs text-neutral-500">
-                                                <span onClick={() => handleShowTextArea2(item.id)}
-                                                    className="px-1 cursor-pointer hover:opacity-60">trả lời</span>
-                                                <span className="px-1 cursor-pointer hover:opacity-60">báo cáo</span>
-                                                <span className="px-1 cursor-pointer hover:opacity-60">tag tên</span>
-                                                {isVisible2[item.id] && (
-                                                    <div className="relative w-[96%] m-auto">
-                                                        <TextArea size="large"
-                                                            autoSize={{ minRows: 2, maxRows: 3 }}
-                                                            styles={{ textarea: { paddingRight: 90 } }}
-                                                            placeholder={`Trả lời ${item.username}`} />
-                                                        <Button
-                                                            color="blue" size="middle"
-                                                            className="absolute right-4 top-2"
-                                                            variant="solid">GỬI</Button>
+                                {/* Load replies button if not loaded yet */}
+                                {!dataReply[item.commentId] && onFetchReplies && (
+                                    <div className="pl-6 mt-2">
+                                        <button
+                                            onClick={() => onFetchReplies(item.commentId)}
+                                            className="text-sm text-blue-600 hover:opacity-60"
+                                        >
+                                            Xem phản hồi
+                                        </button>
+                                    </div>
+                                )}
+
+                                {dataReply[item.commentId] && dataReply[item.commentId].length > 0 && (
+                                    <ShowMoreLess
+                                        data={flattenReplies(dataReply[item.commentId], item)}
+                                        initialVisible={LIMIT_REPLIES}
+                                        incremental={true}
+                                        step={4}
+                                        className="pb-2 w-1/4 m-auto"
+                                        buttonClassName="w-full h-6 rounded-md text-xs px-4 border-2"
+                                        renderItem={(replyItem) => (
+                                            <div className="pl-6 font-sans" key={replyItem.commentId}>
+                                                <div className="px-1 py-1 flex items-center">
+                                                    <div className="capitalize mr-1 text-pink-600">
+                                                        <span className="font-semibold">{replyItem.userName}</span>
+                                                        {replyItem.chapterNumber &&
+                                                            <span className="ml-1 text-blue-600">{"Chương " + replyItem.chapterNumber}</span>
+                                                        }
                                                     </div>
-                                                )}
+                                                    <div className="text-xs text-neutral-500">
+                                                        {replyItem.createdDate
+                                                            ? formatDistanceToNow(new Date(replyItem.createdDate), { addSuffix: true, locale: vi })
+                                                            : "N/A"}
+                                                    </div>
+                                                </div>
+                                                <div className="bg-neutral-300 flex p-2 rounded-md">
+                                                    {replyItem.replyToUser && (
+                                                        <div className="text-blue-600 font-semibold">
+                                                            #{replyItem.replyToUser}
+                                                        </div>
+                                                    )}
+                                                    <div className="ml-1">
+                                                        {replyItem.content}
+                                                    </div>
+                                                </div>
+                                                <div className="capitalize text-xs text-neutral-500">
+                                                    <span onClick={() => handleShowTextArea2(replyItem.commentId)}
+                                                        className="px-1 cursor-pointer hover:opacity-60">trả lời</span>
+                                                    <span className="px-1 cursor-pointer hover:opacity-60">báo cáo</span>
+                                                    <span className="px-1 cursor-pointer hover:opacity-60">tag tên</span>
+                                                    {isVisible2[replyItem.commentId] && (
+                                                        <div className="relative w-[96%] m-auto">
+                                                            <TextArea size="large"
+                                                                autoSize={{ minRows: 2, maxRows: 3 }}
+                                                                styles={{ textarea: { paddingRight: 90 } }}
+                                                                placeholder={`Trả lời ${replyItem.userName}`} />
+                                                            <Button
+                                                                color="blue" size="middle"
+                                                                className="absolute right-4 top-2"
+                                                                variant="solid">GỬI</Button>
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </div>
-                                        </div>
-                                    )}
-                                />
+                                        )}
+                                    />
+                                )}
                             </div>
-                        )} />
+                        )}
+                    />
                 </div>
             </div>
         </div>

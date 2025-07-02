@@ -1,22 +1,5 @@
 import axiosInstance from "../utils/axiosInstance"
-
-
-export interface PageChapterResponse {
-    pageNumber: number;
-    imageUrls: string[];
-}
-
-export interface Chapter {
-    id: number;
-    chapterNumber: number;
-    title: string;
-    releaseDate: string;
-    summary: string;
-    viewCount: number;
-    isActive: boolean;
-    pages: PageChapterResponse[];
-    comicTitle: string;
-}
+import { Chapter } from "../types/chapterTypes"
 
 export const getPaginatedChaptersAPI = async (mangaId: string): Promise<Chapter[]> => {
     try {

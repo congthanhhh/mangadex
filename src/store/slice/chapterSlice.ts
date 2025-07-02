@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { Chapter, ReadingHistory, getPaginatedChaptersAPI, getTop2ChaptersAPI, increaseViewCountAPI } from '../../services/chapterService';
+import { ReadingHistory, getPaginatedChaptersAPI, getTop2ChaptersAPI, increaseViewCountAPI } from '../../services/chapterService';
+import { Chapter } from '../../types';
 
 interface ChapterState {
     chapters: Chapter[];

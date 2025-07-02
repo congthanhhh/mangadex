@@ -3,6 +3,7 @@ import authReducer from './slice/authSlice'
 import mangaReducer from './slice/mangaSlice'
 import chapterReducer from './slice/chapterSlice'
 import pageReducer from './slice/pageSlice'
+import commentReducer from './slice/commentSlice'
 
 export const store = configureStore({
     reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
         manga: mangaReducer,
         chapter: chapterReducer,
         page: pageReducer,
+        comment: commentReducer,
     },
 })
 

@@ -1,34 +1,5 @@
 import axiosInstance from "../utils/axiosInstance"
-
-// Interface for manga response
-export interface MangaResponse {
-    code: number;
-    result: {
-        content: Manga[];
-        totalPages: number;
-        totalElements: number;
-        currentPage: number;
-        pageSize: number;
-    };
-}
-
-export interface GenreResponse {
-    id: number;
-    name: string;
-}
-
-export interface Manga {
-    id: string;
-    title: string;
-    imageUrl: string;
-    status: string;
-    description: string;
-    viewCount: number;
-    ageRating: string | null;
-    genres: GenreResponse[];
-    isActive: boolean;
-    totalChapters: number;
-}
+import { MangaResponse, Manga } from "../types/mangaTypes"
 
 // Fetch paginated manga
 export const getPaginatedMangaAPI = async (page: number, pageSize: number): Promise<MangaResponse> => {

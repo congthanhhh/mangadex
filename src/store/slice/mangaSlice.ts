@@ -1,7 +1,8 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { Manga, MangaResponse, getPaginatedMangaAPI, getMangaByIdAPI, getMangaNewAPI } from '../../services/mangaService';
+import { getPaginatedMangaAPI, getMangaByIdAPI, getMangaNewAPI } from '../../services/mangaService';
+import { Manga, MangaResponse } from '../../types/mangaTypes';
 
-interface MangaState {
+interface MangaSliceState {
     mangaList: Manga[];
     mangaListNew: Manga[];
     selectedManga: Manga | null;
@@ -10,7 +11,7 @@ interface MangaState {
     error: string | null;
     detailError: string | null;
 }
-const initialState: MangaState = {
+const initialState: MangaSliceState = {
     mangaList: [],
     mangaListNew: [],
     selectedManga: null,

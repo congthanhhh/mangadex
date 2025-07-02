@@ -1,19 +1,7 @@
 
 import axiosInstance from "../utils/axiosInstance";
 import { setToken } from "../utils/tokenUtils";
-
-interface LoginRequest {
-    username: string;
-    password: string;
-}
-
-interface LoginResponse {
-    code: number;
-    result: {
-        token: string;
-    };
-    message?: string;
-}
+import { LoginRequest, LoginResponse } from "../types/AuthTypes";
 
 export const loginApi = async (credentials: LoginRequest): Promise<{ success: boolean; message?: string }> => {
     try {
