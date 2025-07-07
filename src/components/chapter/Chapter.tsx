@@ -5,8 +5,7 @@ import SelectChapter from "../modalManga/SelectChapter"
 import Comment from "../mangaDetail/Comment"
 import { useParams, NavLink } from "react-router-dom"
 import { useAppDispatch, useAppSelector } from "../../store/hooks"
-import { fetchPagesByChapterId } from "../../store/slice/pageSlice"
-import { increaseViewCount } from "../../store/slice/chapterSlice"
+import { clearComments, fetchAllRepliesForComments, fetchRootCommentChapter, fetchRootComments } from "../../store/slice/commentSlice";
 
 
 
@@ -14,41 +13,37 @@ const Chapter = () => {
     const [isOpenChapter, setIsOpenChapter] = useState(false);
     const [isScrollingUp, setIsScrollingUp] = useState(false);
     const [lastScrollY, setLastScrollY] = useState(0);
-    const [comment, setComment] = useState([]);
-    const [replyComment, setReplyComment] = useState([]);
     const LIMIT_COMMENT = 10;
     const LIMIT_REPLIES = 4;
 
-    const { id, chapterNumber } = useParams();
+    const { id, chapterNumber } = useParams(); //chaperId
 
-    const fetchComment = async () => {
-        try {
-            const res = await fetch(`https://jsonplaceholder.typicode.com/posts`);
-            const data = await res.json();
-            setComment(data)
-        } catch (error) {
-            console.error("Error fetching data:", error);
-        }
-    };
-    const fetchReplyComment = async () => {
-        try {
-            const res = await fetch(`https://jsonplaceholder.typicode.com/users`);
-            const data = await res.json();
-            setReplyComment(data)
-        } catch (error) {
-            console.error("Error fetching data:", error);
-        }
-    };
 
     const dispatch = useAppDispatch();
-    const { pages } = useAppSelector(state => state.page); useEffect(() => {
-        if (id) {
-            dispatch(fetchPagesByChapterId(Number(id)));
-            dispatch(increaseViewCount(Number(id)));
-        }
+    const { pages } = useAppSelector(state => state.page);
 
+    const { rootComments, replies, loading: commentLoading, error: commentError } = useAppSelector(state => state.comment);
+
+    const fetchComment = async () => {
+        if (!id) return;
+
+        try {
+            const resultAction = await dispatch(fetchRootCommentChapter(Number(id)));
+
+            if (fetchRootComments.fulfilled.match(resultAction)) {
+                const rootCommentsData = resultAction.payload;
+                if (Array.isArray(rootCommentsData) && rootCommentsData.length > 0) {
+                    dispatch(fetchAllRepliesForComments(rootCommentsData));
+                }
+            }
+        } catch (error) {
+            console.error("Error fetching comments:", error);
+        }
+    }
+
+    useEffect(() => {
+        dispatch(clearComments());
         fetchComment();
-        fetchReplyComment();
     }, [id, dispatch]);
 
     const showModal = () => {
@@ -147,10 +142,20 @@ const Chapter = () => {
                 </div>
             </div>
             <Comment
-                dataComment={comment}
-                dataReply={replyComment}
+                dataComment={rootComments}
+                dataReply={replies}
                 LIMIT_COMMENT={LIMIT_COMMENT}
                 LIMIT_REPLIES={LIMIT_REPLIES} />
+            {commentLoading && (
+                <div className="text-center p-4">
+                    Đang tải bình luận...
+                </div>
+            )}
+            {commentError && (
+                <div className="text-center p-4 text-red-500">
+                    Lỗi: {commentError}
+                </div>
+            )}
             <SelectChapter
                 isOpenChapter={isOpenChapter}
                 handleCancel={handleCancel} />

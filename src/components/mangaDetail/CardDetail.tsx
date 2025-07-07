@@ -8,7 +8,7 @@ import Comment from "./Comment";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { fetchChaptersByMangaId } from "../../store/slice/chapterSlice";
 import { fetchMangaById } from "../../store/slice/mangaSlice";
-import { fetchRootComments, fetchAllRepliesForComments, fetchRepliesForComment, clearComments } from "../../store/slice/commentSlice";
+import { fetchRootComments, fetchAllRepliesForComments, clearComments } from "../../store/slice/commentSlice";
 
 
 const CardDetail = () => {
@@ -29,10 +29,8 @@ const CardDetail = () => {
         if (!id) return;
 
         try {
-            // Fetch root comments first
             const resultAction = await dispatch(fetchRootComments(id));
 
-            // If successful, fetch all replies
             if (fetchRootComments.fulfilled.match(resultAction)) {
                 const rootCommentsData = resultAction.payload;
                 if (Array.isArray(rootCommentsData) && rootCommentsData.length > 0) {
@@ -43,11 +41,6 @@ const CardDetail = () => {
             console.error("Error fetching comments:", error);
         }
     }
-
-    // Function to fetch replies for a specific comment
-    const fetchRepliesForCommentHandler = async (commentId: number) => {
-        dispatch(fetchRepliesForComment(commentId));
-    };
 
     const handleGoToChapter = () => {
         if (!chapterInput || !chapters || chapters.length === 0) return;
@@ -274,7 +267,6 @@ const CardDetail = () => {
                     dataReply={replies}
                     LIMIT_COMMENT={LIMIT_COMMENT}
                     LIMIT_REPLIES={LIMIT_REPLIES}
-                    onFetchReplies={fetchRepliesForCommentHandler}
                 />
                 {commentLoading && (
                     <div className="text-center p-4">

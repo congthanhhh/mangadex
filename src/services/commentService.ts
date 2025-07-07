@@ -10,6 +10,15 @@ export const getRootCommentAPI = async (mangaId: string): Promise<RootCommentRes
         throw error;
     }
 }
+export const getRootCommentChapterAPI = async (chapterId: number): Promise<RootCommentResponse> => {
+    try {
+        const response = await axiosInstance.get(`/comment/root-chapter/${chapterId}`);
+        return response.data.result;
+    } catch (error) {
+        console.error("Error fetching root comment:", error);
+        throw error;
+    }
+}
 export const getRepliesCommentAPI = async (commentId: number): Promise<RepliesCommentResponse> => {
     try {
         const response = await axiosInstance.get(`/comment/replies/${commentId}`);

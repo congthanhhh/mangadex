@@ -36,7 +36,6 @@ export interface CommentProps {
     dataReply: { [key: number]: IRePlyComment[] };
     LIMIT_COMMENT: number;
     LIMIT_REPLIES: number;
-    onFetchReplies?: (commentId: number) => void;
 }
 
 // Redux State types

@@ -66,18 +66,10 @@ const chapterSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            .addCase(fetchChaptersByMangaId.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-            })
             .addCase(fetchChaptersByMangaId.fulfilled, (state, action: PayloadAction<{ mangaId: string, chapters: Chapter[] }>) => {
                 state.loading = false;
                 state.chapters = action.payload.chapters;
                 state.chaptersByMangaId[action.payload.mangaId] = action.payload.chapters;
-            })
-            .addCase(fetchChaptersByMangaId.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload as string;
             })
             .addCase(fetchTop2ChaptersByMangaId.fulfilled, (state, action: PayloadAction<{ mangaId: string, chapters: Chapter[] }>) => {
                 state.loading = false;

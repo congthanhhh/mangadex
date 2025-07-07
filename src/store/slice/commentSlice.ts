@@ -1,6 +1,6 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit'
-import { getRootCommentAPI, getRepliesCommentAPI } from '../../services/commentService'
-import { IRootComment, IRePlyComment, CommentState } from '../../types/commentTypes'
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import { getRootCommentAPI, getRepliesCommentAPI, getRootCommentChapterAPI } from '../../services/commentService'
+import { IRootComment, CommentState } from '../../types/commentTypes'
 
 const initialState: CommentState = {
     rootComments: [],
@@ -15,24 +15,21 @@ export const fetchRootComments = createAsyncThunk(
     async (mangaId: string, { rejectWithValue }) => {
         try {
             const response = await getRootCommentAPI(mangaId);
-            return response.result || response;
+            return response;
         } catch (error) {
             return rejectWithValue(error instanceof Error ? error.message : 'Failed to fetch root comments');
         }
     }
 )
 
-export const fetchRepliesForComment = createAsyncThunk(
-    'comment/fetchRepliesForComment',
-    async (commentId: number, { rejectWithValue }) => {
+export const fetchRootCommentChapter = createAsyncThunk(
+    'comment/fetchRootCommentChapter',
+    async (chapterId: number, { rejectWithValue }) => {
         try {
-            const response = await getRepliesCommentAPI(commentId);
-            return {
-                commentId,
-                replies: response.result || response
-            };
+            const response = await getRootCommentChapterAPI(chapterId);
+            return response;
         } catch (error) {
-            return rejectWithValue(error instanceof Error ? error.message : 'Failed to fetch replies');
+            return rejectWithValue(error instanceof Error ? error.message : 'Failed to fetch root comments');
         }
     }
 )
@@ -46,7 +43,7 @@ export const fetchAllRepliesForComments = createAsyncThunk(
                     const response = await getRepliesCommentAPI(rootComment.commentId);
                     return {
                         commentId: rootComment.commentId,
-                        replies: Array.isArray(response.result || response) ? (response.result || response) : []
+                        replies: Array.isArray(response) ? (response) : []
                     };
                 } catch (error) {
                     console.error(`Error fetching replies for comment ${rootComment.commentId}:`, error);
@@ -74,23 +71,16 @@ const commentSlice = createSlice({
             state.replies = {};
             state.error = null;
         },
-        setRepliesForComment: (state, action: PayloadAction<{ commentId: number; replies: IRePlyComment[] }>) => {
-            const { commentId, replies } = action.payload;
-            state.replies[commentId] = replies;
-        }
     },
     extraReducers: (builder) => {
         builder
-
             .addCase(fetchRootComments.fulfilled, (state, action) => {
                 state.loading = false;
                 state.rootComments = Array.isArray(action.payload) ? action.payload : [];
             })
-
-            .addCase(fetchRepliesForComment.fulfilled, (state, action) => {
+            .addCase(fetchRootCommentChapter.fulfilled, (state, action) => {
                 state.loading = false;
-                const { commentId, replies } = action.payload;
-                state.replies[commentId] = Array.isArray(replies) ? replies : [];
+                state.rootComments = Array.isArray(action.payload) ? action.payload : [];
             })
 
             .addCase(fetchAllRepliesForComments.fulfilled, (state, action) => {
@@ -102,5 +92,5 @@ const commentSlice = createSlice({
     },
 })
 
-export const { clearComments, setRepliesForComment } = commentSlice.actions
+export const { clearComments } = commentSlice.actions
 export default commentSlice.reducer

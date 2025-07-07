@@ -8,7 +8,7 @@ const { TextArea } = Input;
 
 const Comment = (props: CommentProps) => {
 
-    const { dataComment, LIMIT_COMMENT, dataReply, LIMIT_REPLIES, onFetchReplies } = props;
+    const { dataComment, LIMIT_COMMENT, dataReply, LIMIT_REPLIES } = props;
 
     const [isVisible, setIsVisible] = useState<Record<number, boolean>>({});
     const [isVisible2, setIsVisible2] = useState<Record<number, boolean>>({});
@@ -126,21 +126,9 @@ const Comment = (props: CommentProps) => {
                                     )}
                                 </div>
                                 {/* Reply */}
-                                {/* Load replies button if not loaded yet */}
-                                {!dataReply[item.commentId] && onFetchReplies && (
-                                    <div className="pl-6 mt-2">
-                                        <button
-                                            onClick={() => onFetchReplies(item.commentId)}
-                                            className="text-sm text-blue-600 hover:opacity-60"
-                                        >
-                                            Xem phản hồi
-                                        </button>
-                                    </div>
-                                )}
-
                                 {dataReply[item.commentId] && dataReply[item.commentId].length > 0 && (
                                     <ShowMoreLess
-                                        data={flattenReplies(dataReply[item.commentId], item)}
+                                        data={flattenReplies(dataReply[item.commentId])}
                                         initialVisible={LIMIT_REPLIES}
                                         incremental={true}
                                         step={4}
@@ -164,6 +152,8 @@ const Comment = (props: CommentProps) => {
                                                 <div className="bg-neutral-300 flex p-2 rounded-md">
                                                     {replyItem.replyToUser && (
                                                         <div className="text-blue-600 font-semibold">
+
+
                                                             #{replyItem.replyToUser}
                                                         </div>
                                                     )}
