@@ -36,12 +36,24 @@ export interface CommentProps {
     dataReply: { [key: number]: IRePlyComment[] };
     LIMIT_COMMENT: number;
     LIMIT_REPLIES: number;
+    comicId?: string;
+    chapterId?: number;
+
 }
 
 // Redux State types
 export interface CommentState {
     rootComments: IRootComment[];
-    replies: { [key: number]: IRePlyComment[] };
+    replies: { [key: number]: IRePlyComment[] }; // giống với Map Map<number, IRePlyComment[]>
     loading: boolean;
     error: string | null;
+    postSuccess: boolean,
 }
+
+export interface PostCommentRequest {
+    comicId: string;
+    content: string;
+    chapterId?: number;
+    parentId?: number;
+}
+

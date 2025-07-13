@@ -1,17 +1,27 @@
-import { Button, Input } from "antd"
-import { useState } from "react";
+import { Button, Input, message } from "antd"
+import { useState, useEffect } from "react";
 import ShowMoreLess from "./ShowMoreLess";
 import { formatDistanceToNow } from "date-fns";
 import { vi } from "date-fns/locale";
 import { IRootComment, IRePlyComment, CommentProps } from "../../types/commentTypes";
+import { postComment, fetchRootComments, fetchAllRepliesForComments, resetPostState, fetchRootCommentChapter } from "../../store/slice/commentSlice";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
 const { TextArea } = Input;
 
 const Comment = (props: CommentProps) => {
 
-    const { dataComment, LIMIT_COMMENT, dataReply, LIMIT_REPLIES } = props;
+    const { dataComment, LIMIT_COMMENT, dataReply, LIMIT_REPLIES, comicId, chapterId } = props;
+    const dispatch = useAppDispatch();
+
+    const { postSuccess } = useAppSelector(state => state.comment);
 
     const [isVisible, setIsVisible] = useState<Record<number, boolean>>({});
     const [isVisible2, setIsVisible2] = useState<Record<number, boolean>>({});
+    const [content, setContent] = useState<string>("");
+    const [inputComicId, setInputComicId] = useState<string>("");
+    const [inputChapterId, setInputChapterId] = useState<number>();
+    const [parentId, setParentId] = useState<number>();
+
 
     // Function to flatten nested replies into a single array with parent info
     const flattenReplies = (replies: IRePlyComment[], rootComment?: IRootComment): (IRePlyComment & { replyToUser?: string })[] => {
@@ -66,6 +76,85 @@ const Comment = (props: CommentProps) => {
         }));
         console.log(">>> Check comment: ", isVisible2)
     };
+
+    const handleOnChange = (
+        e: React.ChangeEvent<HTMLTextAreaElement>,
+        comic?: string,
+        chapter?: number,
+        parent?: number
+    ) => {
+        setContent(e.target.value);
+        setInputComicId(comic ? comic : comicId || "");
+        setInputChapterId(chapter ? chapter : chapterId || undefined);
+        setParentId(parent ? parent : undefined);
+    }
+
+    const reloadComments = async () => {
+        if (chapterId) {
+            try {
+                console.log("Reloading comments for chapter:", chapterId);
+                const resultAction = await dispatch(fetchRootCommentChapter(chapterId));
+
+                if (fetchRootCommentChapter.fulfilled.match(resultAction)) {
+                    const rootCommentsData = resultAction.payload;
+                    if (Array.isArray(rootCommentsData) && rootCommentsData.length > 0) {
+                        dispatch(fetchAllRepliesForComments(rootCommentsData));
+                    }
+                }
+            } catch (error) {
+                console.error("Error reloading chapter comments:", error);
+            }
+        } else if (comicId) {
+            try {
+                console.log("Reloading comments for comic:", comicId);
+                const resultAction = await dispatch(fetchRootComments(comicId));
+
+                if (fetchRootComments.fulfilled.match(resultAction)) {
+                    const rootCommentsData = resultAction.payload;
+                    if (Array.isArray(rootCommentsData) && rootCommentsData.length > 0) {
+                        dispatch(fetchAllRepliesForComments(rootCommentsData));
+                    }
+                }
+            } catch (error) {
+                console.error("Error reloading comic comments:", error);
+            }
+        }
+    };
+
+    useEffect(() => {
+        if (postSuccess) {
+            message.success("Đăng bình luận thành công!");
+
+            setContent("");
+            setInputComicId("");
+            setInputChapterId(undefined);
+            setParentId(undefined);
+
+            setIsVisible({});
+            setIsVisible2({});
+
+            reloadComments();
+
+            dispatch(resetPostState());
+        }
+    }, [postSuccess, dispatch, comicId, chapterId]);
+
+    const handleSendComment = () => {
+        if (!content || content.trim().length < 5) {
+            message.error("Nội dung bình luận phải có ít nhất 5 ký tự.");
+            return;
+        }
+        dispatch(postComment({ content, comicId: inputComicId, chapterId: inputChapterId, parentId }))
+    }
+
+    const handleSendReplyComment = (targetParentId: number) => {
+        if (!content || content.trim().length < 5) {
+            message.error("Nội dung bình luận phải có ít nhất 5 ký tự.");
+            return;
+        }
+        dispatch(postComment({ content, comicId: inputComicId, chapterId: inputChapterId, parentId: targetParentId }))
+    }
+
     return (
         <div className="bg-neutral-200 font-sans rounded-md">
             <div className="px-4 mt-5 pb-2">
@@ -74,8 +163,13 @@ const Comment = (props: CommentProps) => {
                     <TextArea size="large"
                         autoSize={{ minRows: 2, maxRows: 3 }}
                         styles={{ textarea: { paddingRight: 90 } }}
-                        placeholder="Người tiện tay vẽ hoa vẽ lá, Tôi đa tình tưởng đó là mùa xuân..." />
+                        placeholder="Người tiện tay vẽ hoa vẽ lá, Tôi đa tình tưởng đó là mùa xuân..."
+                        value={content}
+                        onChange={(e) => handleOnChange(e, comicId, undefined, undefined)}
+                    />
                     <Button
+                        onClick={handleSendComment}
+                        disabled={!content.trim()}
                         color="blue" size="middle"
                         className="absolute right-8 top-2"
                         variant="solid">GỬI</Button>
@@ -117,8 +211,13 @@ const Comment = (props: CommentProps) => {
                                             <TextArea size="large"
                                                 autoSize={{ minRows: 2, maxRows: 3 }}
                                                 styles={{ textarea: { paddingRight: 90 } }}
-                                                placeholder={`Trả lời ${item.userName}`} />
+                                                placeholder={`Trả lời ${item.userName}`}
+                                                value={parentId === item.commentId ? content : ""}
+                                                onChange={(e) => handleOnChange(e, comicId, chapterId, item.commentId)}
+                                            />
                                             <Button
+                                                onClick={() => handleSendReplyComment(item.commentId)}
+                                                disabled={!content.trim() || parentId !== item.commentId}
                                                 color="blue" size="middle"
                                                 className="absolute right-4 top-2"
                                                 variant="solid">GỬI</Button>
@@ -152,8 +251,6 @@ const Comment = (props: CommentProps) => {
                                                 <div className="bg-neutral-300 flex p-2 rounded-md">
                                                     {replyItem.replyToUser && (
                                                         <div className="text-blue-600 font-semibold">
-
-
                                                             #{replyItem.replyToUser}
                                                         </div>
                                                     )}
@@ -171,8 +268,14 @@ const Comment = (props: CommentProps) => {
                                                             <TextArea size="large"
                                                                 autoSize={{ minRows: 2, maxRows: 3 }}
                                                                 styles={{ textarea: { paddingRight: 90 } }}
-                                                                placeholder={`Trả lời ${replyItem.userName}`} />
+                                                                placeholder={`Trả lời ${replyItem.userName}`}
+                                                                value={parentId === replyItem.commentId ? content : ""}
+                                                                onChange={(e) => handleOnChange(e, comicId, chapterId, replyItem.commentId)}
+                                                            />
+
                                                             <Button
+                                                                onClick={() => handleSendReplyComment(replyItem.commentId)}
+                                                                disabled={!content.trim() || parentId !== replyItem.commentId}
                                                                 color="blue" size="middle"
                                                                 className="absolute right-4 top-2"
                                                                 variant="solid">GỬI</Button>

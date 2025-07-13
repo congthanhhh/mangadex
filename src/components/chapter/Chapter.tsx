@@ -3,9 +3,9 @@ import { MenuOutlined, VerticalLeftOutlined, VerticalRightOutlined, EyeFilled } 
 import { useEffect, useState } from "react"
 import SelectChapter from "../modalManga/SelectChapter"
 import Comment from "../mangaDetail/Comment"
-import { useParams, NavLink } from "react-router-dom"
+import { useParams, NavLink, useLocation } from "react-router-dom"
 import { useAppDispatch, useAppSelector } from "../../store/hooks"
-import { clearComments, fetchAllRepliesForComments, fetchRootCommentChapter, fetchRootComments } from "../../store/slice/commentSlice";
+import { clearComments, fetchAllRepliesForComments, fetchRootCommentChapter } from "../../store/slice/commentSlice";
 
 
 
@@ -16,7 +16,9 @@ const Chapter = () => {
     const LIMIT_COMMENT = 10;
     const LIMIT_REPLIES = 4;
 
-    const { id, chapterNumber } = useParams(); //chaperId
+    const location = useLocation();
+    const cid = location.state?.cid;
+    const { chid, chapterNumber } = useParams();
 
 
     const dispatch = useAppDispatch();
@@ -25,13 +27,14 @@ const Chapter = () => {
     const { rootComments, replies, loading: commentLoading, error: commentError } = useAppSelector(state => state.comment);
 
     const fetchComment = async () => {
-        if (!id) return;
+        if (!chid) return;
 
         try {
-            const resultAction = await dispatch(fetchRootCommentChapter(Number(id)));
+            const resultAction = await dispatch(fetchRootCommentChapter(Number(chid)));
 
-            if (fetchRootComments.fulfilled.match(resultAction)) {
+            if (fetchRootCommentChapter.fulfilled.match(resultAction)) {
                 const rootCommentsData = resultAction.payload;
+
                 if (Array.isArray(rootCommentsData) && rootCommentsData.length > 0) {
                     dispatch(fetchAllRepliesForComments(rootCommentsData));
                 }
@@ -44,7 +47,7 @@ const Chapter = () => {
     useEffect(() => {
         dispatch(clearComments());
         fetchComment();
-    }, [id, dispatch]);
+    }, [chid, dispatch]);
 
     const showModal = () => {
         setIsOpenChapter(true)
@@ -142,6 +145,8 @@ const Chapter = () => {
                 </div>
             </div>
             <Comment
+                comicId={cid || ""}
+                chapterId={Number(chid)}
                 dataComment={rootComments}
                 dataReply={replies}
                 LIMIT_COMMENT={LIMIT_COMMENT}

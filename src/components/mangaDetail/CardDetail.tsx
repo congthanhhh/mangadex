@@ -18,7 +18,7 @@ const CardDetail = () => {
     const LIMIT_REPLIES = 2;
     const navigate = useNavigate();
 
-    const { id } = useParams(); // comicId
+    const { cid } = useParams(); // comicId
 
     const dispatch = useAppDispatch();
     const { chapters, loading, error } = useAppSelector(state => state.chapter);
@@ -26,10 +26,10 @@ const CardDetail = () => {
     const { rootComments, replies, loading: commentLoading, error: commentError } = useAppSelector(state => state.comment);
 
     const fetchComment = async () => {
-        if (!id) return;
+        if (!cid) return;
 
         try {
-            const resultAction = await dispatch(fetchRootComments(id));
+            const resultAction = await dispatch(fetchRootComments(cid));
 
             if (fetchRootComments.fulfilled.match(resultAction)) {
                 const rootCommentsData = resultAction.payload;
@@ -73,14 +73,14 @@ const CardDetail = () => {
     };
 
     useEffect(() => {
-        if (id) {
+        if (cid) {
             // Clear previous comments when manga changes
             dispatch(clearComments());
-            dispatch(fetchChaptersByMangaId(id));
-            dispatch(fetchMangaById(id));
+            dispatch(fetchChaptersByMangaId(cid));
+            dispatch(fetchMangaById(cid));
             fetchComment();
         }
-    }, [id, dispatch]);
+    }, [cid, dispatch]);
 
     return (
         <div>
@@ -225,7 +225,7 @@ const CardDetail = () => {
                                                     buttonClassName="w-full h-11 rounded-md text-sm px-4 border-2"
                                                     renderItem={(item) => (
                                                         <Col lg={8} md={8} sm={12} xs={24} key={item.id} className="p-2 py-1 cursor-pointer">
-                                                            <a onClick={() => navigate(`/chapter/${item.id}/chapter-number/${item.chapterNumber}`)}
+                                                            <a onClick={() => navigate(`/chapter/${item.id}/chapter-number/${item.chapterNumber}`, { state: { cid: cid } })}
                                                                 className="w-full flex items-center bg-neutral-300 p-1 rounded hover:opacity-65 hover:text-slate-500">
                                                                 <div className=" flex items-center rounded-md bg-red-300 w-12 h-14 justify-center">
                                                                     <EyeTwoTone twoToneColor='#f33' className="text-base" />
@@ -263,6 +263,8 @@ const CardDetail = () => {
                     </Col>
                 </Row>
                 <Comment
+                    comicId={cid || ""}
+                    chapterId={undefined}
                     dataComment={rootComments}
                     dataReply={replies}
                     LIMIT_COMMENT={LIMIT_COMMENT}
