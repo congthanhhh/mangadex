@@ -6,6 +6,7 @@ import Comment from "../mangaDetail/Comment"
 import { useParams, NavLink, useLocation } from "react-router-dom"
 import { useAppDispatch, useAppSelector } from "../../store/hooks"
 import { clearComments, fetchAllRepliesForComments, fetchRootCommentChapter } from "../../store/slice/commentSlice";
+import { fetchPagesByChapterId } from "../../store/slice/pageSlice"
 
 
 
@@ -45,6 +46,9 @@ const Chapter = () => {
     }
 
     useEffect(() => {
+        if (chid) {
+            dispatch(fetchPagesByChapterId(Number(chid)));
+        }
         dispatch(clearComments());
         fetchComment();
     }, [chid, dispatch]);

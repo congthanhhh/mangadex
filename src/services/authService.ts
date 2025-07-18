@@ -1,6 +1,6 @@
 
 import axiosInstance from "../utils/axiosInstance";
-import { setToken } from "../utils/tokenUtils";
+import { setToken, removeToken, getToken } from "../utils/tokenUtils";
 import { LoginRequest, LoginResponse } from "../types/AuthTypes";
 
 export const loginApi = async (credentials: LoginRequest): Promise<{ success: boolean; message?: string }> => {
@@ -50,3 +50,30 @@ export const authenticateWithGoogle = async (authCode: string): Promise<{ succes
         };
     }
 };
+
+export const logoutApi = async (): Promise<void> => {
+    try {
+        const token = getToken();
+        if (!token) {
+            throw new Error('No token found');
+        }
+        await axiosInstance.post('/auth/logout', token);
+        removeToken();
+    } catch (error: any) {
+        console.error('Logout failed:', error);
+        throw new Error(error.response?.data?.message || 'Logout failed');
+    }
+}
+
+export const refreshTokenApi = async (): Promise<void> => {
+    try {
+        const token = getToken();
+        if (!token) {
+            throw new Error('No token found');
+        }
+        await axiosInstance.post('/auth/refresh', { token });
+    } catch (error: any) {
+        console.error('Refresh token failed:', error);
+        throw new Error(error.response?.data?.message || 'Refresh token failed');
+    }
+}

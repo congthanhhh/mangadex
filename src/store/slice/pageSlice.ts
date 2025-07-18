@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { getPagesByChapterIdAPI, Page } from "../../services/pageService";
+import { getPagesByChapterIdAPI } from "../../services/pageService";
+import { Page } from "../../types";
 
 interface PageState {
     pages: Page[];

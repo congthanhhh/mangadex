@@ -19,16 +19,39 @@ const Login = (props: ModelLoginProps) => {
 
     // Form state
     const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");    // Check if user is authenticated and redirect if needed
+    const [password, setPassword] = useState("");
+    const [hasShownSuccessMessage, setHasShownSuccessMessage] = useState(false);
+    const [isLoggingIn, setIsLoggingIn] = useState(false);    // Check if user is authenticated and redirect if needed
     useEffect(() => {
-        if (isAuthenticated) {
-            // Fetch user information after successful login
+        if (isAuthenticated && !hasShownSuccessMessage && isLoggingIn && isOpenLogin) {
+            message.success('Đăng nhập thành công!');
+            setHasShownSuccessMessage(true);
+            setIsLoggingIn(false);
+
+            // Fetch user info after successful login
             dispatch(getUserInfo());
+
             handleCancel();
         }
-    }, [isAuthenticated, handleCancel, dispatch]);
+    }, [isAuthenticated, handleCancel, dispatch, hasShownSuccessMessage, isLoggingIn, isOpenLogin]);
+
+    // Reset flags when modal is closed
+    useEffect(() => {
+        if (!isOpenLogin) {
+            setHasShownSuccessMessage(false);
+            setIsLoggingIn(false);
+        }
+    }, [isOpenLogin]);
+
+    // Show error message if login fails
+    useEffect(() => {
+        if (error) {
+            message.error(error);
+        }
+    }, [error]);
 
     const handleContinueGoogle = () => {
+        setIsLoggingIn(true);
         const { clientId, redirectUri, authUri } = OAuthConfig;
         const targetUrl = `${authUri}?redirect_uri=${encodeURIComponent(
             redirectUri
@@ -42,10 +65,11 @@ const Login = (props: ModelLoginProps) => {
         event.preventDefault();
 
         if (!username || !password) {
-            message.error('Please enter both username and password');
+            message.error('Vui lòng nhập tên đăng nhập và mật khẩu');
             return;
         }
 
+        setIsLoggingIn(true);
         dispatch(login({ username, password }));
     };
 

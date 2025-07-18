@@ -9,11 +9,12 @@ import {
     UnorderedListOutlined,
     UserOutlined
 } from '@ant-design/icons';
-import { Collapse, CollapseProps, Modal, Spin } from 'antd'
+import { Collapse, CollapseProps, Modal, Spin, message } from 'antd'
 import { NavLink } from 'react-router-dom';
 import Login from './Login';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { logout } from '../../store/slice/authSlice';
+import { logoutAsync, getUserInfo } from '../../store/slice/authSlice';
+import { useEffect } from 'react';
 
 interface ModelInfoProps {
     isOpenUserInfo: boolean;
@@ -26,11 +27,25 @@ interface ModelInfoProps {
 const UserInfo = (props: ModelInfoProps) => {
     const { isOpenUserInfo, isOpenLogin, handleCancel, handleCancelLogin, showModalLogin } = props;
     const dispatch = useAppDispatch();
-    const { isAuthenticated, user, loading } = useAppSelector((state) => state.auth);
+    const { isAuthenticated, user, loading, logoutLoading } = useAppSelector((state) => state.auth);
 
-    const handleLogout = () => {
-        dispatch(logout());
-        handleCancel();
+    useEffect(() => {
+        console.log('UserInfo useEffect:', { isAuthenticated, user, loading });
+        if (isAuthenticated && !user && !loading) {
+            console.log('Dispatching getUserInfo...');
+            dispatch(getUserInfo());
+        }
+    }, [isAuthenticated, user, loading, dispatch]);
+
+    const handleLogout = async () => {
+        try {
+            await dispatch(logoutAsync()).unwrap();
+            message.success('Đăng xuất thành công!');
+            handleCancel();
+        } catch (error) {
+            message.error('Có lỗi xảy ra khi đăng xuất');
+            console.error('Logout error:', error);
+        }
     };
 
     const items: CollapseProps['items'] = [
@@ -76,7 +91,9 @@ const UserInfo = (props: ModelInfoProps) => {
                         <>
                             <div className='cursor-pointer p-1 mb-2 flex hover:bg-red-100 hover:rounded'>
                                 <UserOutlined style={{ fontSize: 22, color: 'GrayText' }} />
-                                <span className='text-base ml-2 font-semibold text-gray-500'>{user?.username || 'User'}</span>
+                                <span className='text-base ml-2 font-semibold text-gray-500'>
+                                    {user?.username || user?.displayName || 'User'}
+                                </span>
                             </div>
                             {user?.email && (
                                 <div className='cursor-pointer p-1 mb-2 flex hover:bg-red-100 hover:rounded'>
@@ -120,7 +137,9 @@ const UserInfo = (props: ModelInfoProps) => {
                     {isAuthenticated && (
                         <div onClick={handleLogout} className='cursor-pointer p-1 mb-2 flex hover:bg-red-100 hover:rounded'>
                             <LogoutOutlined style={{ fontSize: 22, color: 'GrayText' }} />
-                            <span className='text-base ml-2 font-semibold text-gray-500'>đăng xuất</span>
+                            <span className='text-base ml-2 font-semibold text-gray-500'>
+                                {logoutLoading ? 'Đang đăng xuất...' : 'đăng xuất'}
+                            </span>
                         </div>
                     )}
                 </div>

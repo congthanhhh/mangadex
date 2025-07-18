@@ -6,6 +6,7 @@ import { vi } from "date-fns/locale";
 import { IRootComment, IRePlyComment, CommentProps } from "../../types/commentTypes";
 import { postComment, fetchRootComments, fetchAllRepliesForComments, resetPostState, fetchRootCommentChapter } from "../../store/slice/commentSlice";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import Login from "../modalManga/Login";
 const { TextArea } = Input;
 
 const Comment = (props: CommentProps) => {
@@ -14,6 +15,7 @@ const Comment = (props: CommentProps) => {
     const dispatch = useAppDispatch();
 
     const { postSuccess } = useAppSelector(state => state.comment);
+    const { isAuthenticated } = useAppSelector(state => state.auth);
 
     const [isVisible, setIsVisible] = useState<Record<number, boolean>>({});
     const [isVisible2, setIsVisible2] = useState<Record<number, boolean>>({});
@@ -21,6 +23,7 @@ const Comment = (props: CommentProps) => {
     const [inputComicId, setInputComicId] = useState<string>("");
     const [inputChapterId, setInputChapterId] = useState<number>();
     const [parentId, setParentId] = useState<number>();
+    const [showLoginModal, setShowLoginModal] = useState<boolean>(false);
 
 
     // Function to flatten nested replies into a single array with parent info
@@ -139,7 +142,20 @@ const Comment = (props: CommentProps) => {
         }
     }, [postSuccess, dispatch, comicId, chapterId]);
 
+    // Close login modal when user successfully authenticates
+    useEffect(() => {
+        if (isAuthenticated && showLoginModal) {
+            setShowLoginModal(false);
+        }
+    }, [isAuthenticated, showLoginModal]);
+
     const handleSendComment = () => {
+        // Kiểm tra authentication trước
+        if (!isAuthenticated) {
+            setShowLoginModal(true);
+            return;
+        }
+
         if (!content || content.trim().length < 5) {
             message.error("Nội dung bình luận phải có ít nhất 5 ký tự.");
             return;
@@ -148,6 +164,12 @@ const Comment = (props: CommentProps) => {
     }
 
     const handleSendReplyComment = (targetParentId: number) => {
+        // Kiểm tra authentication trước
+        if (!isAuthenticated) {
+            setShowLoginModal(true);
+            return;
+        }
+
         if (!content || content.trim().length < 5) {
             message.error("Nội dung bình luận phải có ít nhất 5 ký tự.");
             return;
@@ -172,7 +194,9 @@ const Comment = (props: CommentProps) => {
                         disabled={!content.trim()}
                         color="blue" size="middle"
                         className="absolute right-8 top-2"
-                        variant="solid">GỬI</Button>
+                        variant="solid">
+                        GỬI
+                    </Button>
                 </div>
                 <div className="w-[95%] m-auto font-sans">
                     <ShowMoreLess
@@ -220,7 +244,9 @@ const Comment = (props: CommentProps) => {
                                                 disabled={!content.trim() || parentId !== item.commentId}
                                                 color="blue" size="middle"
                                                 className="absolute right-4 top-2"
-                                                variant="solid">GỬI</Button>
+                                                variant="solid">
+                                                GỬI
+                                            </Button>
                                         </div>
                                     )}
                                 </div>
@@ -278,7 +304,9 @@ const Comment = (props: CommentProps) => {
                                                                 disabled={!content.trim() || parentId !== replyItem.commentId}
                                                                 color="blue" size="middle"
                                                                 className="absolute right-4 top-2"
-                                                                variant="solid">GỬI</Button>
+                                                                variant="solid">
+                                                                GỬI
+                                                            </Button>
                                                         </div>
                                                     )}
                                                 </div>
@@ -291,6 +319,11 @@ const Comment = (props: CommentProps) => {
                     />
                 </div>
             </div>
+            {/* Login Modal */}
+            <Login
+                isOpenLogin={showLoginModal}
+                handleCancel={() => setShowLoginModal(false)}
+            />
         </div>
     )
 }

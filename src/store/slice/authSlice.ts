@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { loginApi, authenticateWithGoogle } from "../../services/authService";
+import { loginApi, authenticateWithGoogle, logoutApi, refreshTokenApi } from "../../services/authService";
 import { getToken, removeToken } from "../../utils/tokenUtils";
 import { UserInfo, fetchUserInfo } from "../../services/userService";
 
@@ -8,13 +8,15 @@ interface AuthState {
     isAuthenticated: boolean;
     loading: boolean;
     error: string | null;
+    logoutLoading: boolean;
 }
 
 const initialState: AuthState = {
     user: null,
     isAuthenticated: !!getToken(), // Check if token exists
     loading: false,
-    error: null
+    error: null,
+    logoutLoading: false
 };
 
 export const login = createAsyncThunk(
@@ -61,6 +63,33 @@ export const getUserInfo = createAsyncThunk(
             }
         } catch (error: any) {
             return rejectWithValue(error.message || 'Failed to fetch user information');
+        }
+    }
+);
+
+export const logoutAsync = createAsyncThunk(
+    'auth/logoutAsync',
+    async () => {
+        try {
+            // Call API to invalidate token on server
+            await logoutApi();
+            return true;
+        } catch (error: any) {
+            // Even if API fails, we'll still logout locally
+            console.warn('Logout API failed, but will logout locally:', error);
+            return true;
+        }
+    }
+);
+
+export const refreshToken = createAsyncThunk(
+    'auth/refreshToken',
+    async (_, { rejectWithValue }) => {
+        try {
+            await refreshTokenApi();
+            return true;
+        } catch (error: any) {
+            return rejectWithValue(error.message || 'Failed to refresh token');
         }
     }
 );
@@ -118,6 +147,22 @@ const authSlice = createSlice({
             .addCase(getUserInfo.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload as string;
+            })
+            // Add cases for logout
+            .addCase(logoutAsync.pending, (state) => {
+                state.logoutLoading = true;
+            })
+            .addCase(logoutAsync.fulfilled, (state) => {
+                state.logoutLoading = false;
+                state.user = null;
+                state.isAuthenticated = false;
+                state.error = null;
+            })
+            .addCase(logoutAsync.rejected, (state) => {
+                state.logoutLoading = false;
+                state.user = null;
+                state.isAuthenticated = false;
+                state.error = null;
             });
     }
 });

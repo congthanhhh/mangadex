@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Spin, message } from "antd";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
@@ -8,16 +8,19 @@ const Authenticate = () => {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const { isAuthenticated, loading, error } = useAppSelector((state) => state.auth);
+    const [hasShownSuccessMessage, setHasShownSuccessMessage] = useState(false);
+    const [isProcessingAuth, setIsProcessingAuth] = useState(false);
 
     useEffect(() => {
         const authCodeRegex = /code=([^&]+)/;
         const isMatch = window.location.href.match(authCodeRegex);
 
-        if (isMatch) {
+        if (isMatch && !isProcessingAuth) {
             const authCode = isMatch[1];
+            setIsProcessingAuth(true);
             dispatch(googleAuthenticate(authCode));
         }
-    }, [dispatch]);
+    }, [dispatch, isProcessingAuth]);
 
     useEffect(() => {
         if (error) {
@@ -26,11 +29,17 @@ const Authenticate = () => {
     }, [error]);
 
     useEffect(() => {
-        if (isAuthenticated) {
-            // dispatch(getUserInfo());
+        if (isAuthenticated && !hasShownSuccessMessage && isProcessingAuth) {
+            message.success('Đăng nhập thành công!');
+            setHasShownSuccessMessage(true);
+            setIsProcessingAuth(false);
+
+            // Fetch user info after successful Google login
+            dispatch(getUserInfo());
+
             navigate("/trang-chu");
         }
-    }, [isAuthenticated, navigate, dispatch]); return (
+    }, [isAuthenticated, navigate, dispatch, hasShownSuccessMessage, isProcessingAuth]); return (
         <div>
             {loading && (
                 <Spin
