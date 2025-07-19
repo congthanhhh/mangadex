@@ -7,6 +7,7 @@ import { useParams, NavLink, useLocation } from "react-router-dom"
 import { useAppDispatch, useAppSelector } from "../../store/hooks"
 import { clearComments, fetchAllRepliesForComments, fetchRootCommentChapter } from "../../store/slice/commentSlice";
 import { fetchPagesByChapterId } from "../../store/slice/pageSlice"
+import { increaseViewCount } from "../../store/slice/chapterSlice"
 
 
 
@@ -48,6 +49,7 @@ const Chapter = () => {
     useEffect(() => {
         if (chid) {
             dispatch(fetchPagesByChapterId(Number(chid)));
+            dispatch(increaseViewCount(Number(chid)))
         }
         dispatch(clearComments());
         fetchComment();
