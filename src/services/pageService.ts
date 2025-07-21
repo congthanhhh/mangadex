@@ -1,4 +1,4 @@
-import axiosInstance from "../utils/axiosInstance";
+import { axiosInstance } from "../utils/axiosInstance";
 import { Page } from "../types/pageTypes";
 
 export const getPagesByChapterIdAPI = async (chapterId: string): Promise<Page[]> => {

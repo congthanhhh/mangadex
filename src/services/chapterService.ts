@@ -1,4 +1,4 @@
-import axiosInstance from "../utils/axiosInstance"
+import { axiosInstance } from "../utils/axiosInstance"
 import { Chapter } from "../types/chapterTypes"
 
 export const getPaginatedChaptersAPI = async (mangaId: string): Promise<Chapter[]> => {

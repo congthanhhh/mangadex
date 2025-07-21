@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { getUserInfo } from "../../store/slice/authSlice";
-import axiosInstance from "../../utils/axiosInstance";
+import { axiosInstance } from "../../utils/axiosInstance";
 
 export default function HomeProfile() {
     const navigate = useNavigate();

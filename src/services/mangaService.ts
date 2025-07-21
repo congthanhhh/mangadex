@@ -1,5 +1,6 @@
-import axiosInstance from "../utils/axiosInstance"
+
 import { MangaResponse, Manga } from "../types/mangaTypes"
+import { axiosInstance } from "../utils/axiosInstance";
 
 // Fetch paginated manga
 export const getPaginatedMangaAPI = async (page: number, pageSize: number): Promise<MangaResponse> => {
@@ -31,3 +32,4 @@ export const getMangaNewAPI = async (page: number, pageSize: number): Promise<Ma
         throw error;
     }
 }
+

@@ -7,6 +7,7 @@ import Chapter from '../chapter/Chapter';
 import Authenticate from '../modalManga/Authenticate';
 import ScrollToTop from './ScrollToTop';
 import HomeProfile from '../modalManga/HomeProfile';
+import CardMain2 from '../manga/CardMain2';
 
 const AppRouter = () => {
     return (
@@ -14,7 +15,7 @@ const AppRouter = () => {
             <ScrollToTop />
             <Routes>
                 <Route path="/" element={<Navigate to="/trang-chu" replace />} />
-                <Route path="/trang-chu" element={<CardMain />} />
+                <Route path="/trang-chu" element={<CardMain2 />} />
                 <Route path="/danh-sach" element={<ListSearch />} />
                 <Route path="/lien-he" element={<Contact />} />
                 <Route path="/truyen/:cid" element={<CardDetail />} />

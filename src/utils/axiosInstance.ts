@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { getToken } from './tokenUtils';
 
-const axiosInstance = axios.create({
+export const axiosInstance = axios.create({
     baseURL: 'http://localhost:8080/comic',
     headers: {
         'Content-Type': 'application/json',
@@ -31,4 +31,10 @@ axiosInstance.interceptors.response.use(
     }
 );
 
-export default axiosInstance;
+//Jikan API
+export const jikanApi = axios.create({
+    baseURL: 'https://api.jikan.moe/v4',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+});

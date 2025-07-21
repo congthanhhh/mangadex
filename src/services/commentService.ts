@@ -1,4 +1,4 @@
-import axiosInstance from "../utils/axiosInstance"
+import { axiosInstance } from "../utils/axiosInstance"
 import { RootCommentResponse, RepliesCommentResponse, PostCommentRequest } from "../types/commentTypes"
 import { getToken } from "../utils/tokenUtils";
 

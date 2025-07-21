@@ -1,5 +1,5 @@
 
-import axiosInstance from "../utils/axiosInstance";
+import { axiosInstance } from "../utils/axiosInstance";
 import { setToken, removeToken, getToken } from "../utils/tokenUtils";
 import { LoginRequest, LoginResponse } from "../types/AuthTypes";
 

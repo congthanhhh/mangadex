@@ -30,18 +30,12 @@ export interface MangaResponse {
 }
 
 // Redux State types
-export interface MangaState {
-    mangas: Manga[];
+export interface MangaSliceState {
+    mangaList: Manga[];
+    mangaListNew: Manga[];
     selectedManga: Manga | null;
     loading: boolean;
+    loadingMangaDetail: boolean;
     error: string | null;
-    totalPages: number;
-    currentPage: number;
-}
-
-// Component Props types
-export interface IManga {
-    id: string;
-    title: string;
-    // Add other manga properties as needed
+    detailError: string | null;
 }
