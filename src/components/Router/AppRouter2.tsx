@@ -1,24 +1,24 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import ListSearch from '../HeaderNav/ListSearch';
 import Contact from '../HeaderNav/Contact';
-import CardMain from '../manga/CardMain';
-import CardDetail from '../mangaDetail/CardDetail';
-import Chapter from '../chapter/Chapter';
+import CardDetailDex from '../mangaDetail/CardDetailDex';
+import ChapterDex from '../chapter/ChapterDex';
 import Authenticate from '../modalManga/Authenticate';
 import ScrollToTop from './ScrollToTop';
 import HomeProfile from '../modalManga/HomeProfile';
+import CardMainDex from '../manga/CardMainDex';
 
-const AppRouter = () => {
+const AppRouter2 = () => {
     return (
         <>
             <ScrollToTop />
             <Routes>
                 <Route path="/" element={<Navigate to="/trang-chu" replace />} />
-                <Route path="/trang-chu" element={<CardMain />} />
+                <Route path="/trang-chu" element={<CardMainDex />} />
                 <Route path="/danh-sach" element={<ListSearch />} />
                 <Route path="/lien-he" element={<Contact />} />
-                <Route path="/truyen/:cid" element={<CardDetail />} />
-                <Route path="/chapter/:chid/chapter-number/:chapterNumber" element={<Chapter />} />
+                <Route path="/truyen/:cid" element={<CardDetailDex />} />
+                <Route path="/chapter/:chid/chapter-number/:chapterNumber" element={<ChapterDex />} />
 
                 <Route path="/authenticate" element={<Authenticate />} />
                 <Route path="/home-profile" element={<HomeProfile />} />
@@ -28,4 +28,4 @@ const AppRouter = () => {
     )
 }
 
-export default AppRouter
+export default AppRouter2;

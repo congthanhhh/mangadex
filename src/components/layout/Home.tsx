@@ -1,7 +1,7 @@
 import { Layout } from "antd"
 import NavHeader from "./NavHeader"
 import AppRouter from "../Router/AppRouter"
-import Chapter from "../chapter/Chapter"
+import AppRouter2 from "../Router/AppRouter2"
 const { Footer, Content } = Layout
 const Home = () => {
   return (
@@ -10,8 +10,8 @@ const Home = () => {
         <header><NavHeader /></header>
         <Layout className="max-w-screen-xl m-auto">
           <Content>
-            <AppRouter />
-            {/* <Chapter /> */}
+            {/* <AppRouter /> */}
+            <AppRouter2 />
           </Content>
         </Layout>
         <Footer className="bg-white mt-2 h-5 border-t">FOOTER</Footer>

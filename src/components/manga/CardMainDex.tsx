@@ -8,49 +8,52 @@ import CardProposal from "./CardProposal";
 import CarouselItem from "./CarouselItem";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { fetchTopManga } from "../../store/slice/jikanSlice";
-import { fetchTop2ChaptersByMangaId } from "../../store/slice/chapterSlice";
+import { fetchLatestManga } from "../../store/slice/mangadexSlice";
 import { formatDistanceToNow } from 'date-fns';
 import { vi } from 'date-fns/locale';
+import { getCoverImageUrl } from "../../services/mangadexService";
 
-const CardMain2 = () => {
+const CardMainDex = () => {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
-    const pageSize = 24;
-    const maxPages = 200;
+    const pageSize = 30;
+    const maxPages = 100;
 
     const [currentPage, setCurrentPage] = useState(1);
-    const [totalPagesJikan, setTotalPagesJikan] = useState(0);
 
-    const { topMangaList, loading } = useAppSelector(state => state.jikan);
-    const { mangaList } = useAppSelector(state => state.manga);
+    const { manga, loading, pagination } = useAppSelector(state => state.mangadex);
     const { chaptersByMangaId } = useAppSelector(state => state.chapter);
 
-    const displayedManga = topMangaList;
-
     useEffect(() => {
-        dispatch(fetchTopManga({ page: currentPage, pageSize: pageSize }))
+        dispatch(fetchLatestManga({ page: currentPage, limit: pageSize }))
             .unwrap()
-            .then(response => {
-                const apiTotalPages = response.pagination?.last_visible_page || 1;
-                setTotalPagesJikan(Math.min(apiTotalPages, maxPages));
-            })
             .catch(error => {
-                console.error("Error fetching jikan manga:", error);
+                console.error("Error fetching mangadex manga:", error);
             });
     }, [dispatch, currentPage, pageSize]);
 
-    useEffect(() => {
-        if (mangaList.length > 0) {
-            mangaList.forEach(manga => {
-                dispatch(fetchTop2ChaptersByMangaId(manga.id));
-            });
+    // Lấy cover image URL từ relationships
+    const getCoverUrl = (mangaItem: any) => {
+        const coverRelation = mangaItem.relationships?.find(
+            (rel: any) => rel.type === "cover_art"
+        );
+        if (coverRelation?.attributes?.fileName) {
+            return getCoverImageUrl(mangaItem.id, coverRelation.attributes.fileName);
         }
-    }, [mangaList, dispatch]);
+        return assets.mangaImg2;
+    };
+
+    // Lấy title theo ngôn ngữ
+    const getTitle = (mangaItem: any) => {
+        const title = mangaItem.attributes?.title;
+        return title?.en || title?.['ja-ro'] || title?.ja || Object.values(title || {})[0] || "Không có tên";
+    };
 
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
     };
+
+    const totalPages = Math.min(Math.ceil(pagination.total / pageSize), maxPages);
 
     return (
         <>
@@ -60,20 +63,20 @@ const CardMain2 = () => {
                 <hr className="block flex-1 border border-gray-30 border-opacity-30 border-solid transition max-w-full" />
             </div>
             <Row gutter={10}>
-                {displayedManga.map((item) => (
-                    <Col xs={12} sm={8} md={6} lg={4} key={item.mal_id} >
+                {manga.map((item) => (
+                    <Col xs={12} sm={8} md={6} lg={4} key={item.id} >
                         <div className="pt-3 ">
                             <div className="">
                                 <Card loading={loading} hoverable size="small"
                                     cover={
-                                        <div onClick={() => navigate(`/truyen/${item.mal_id}`)} className="relative">
-                                            <img className="h-[250px] w-full rounded-t-lg" src={item.images.webp.image_url || assets.mangaImg2} />
+                                        <div onClick={() => navigate(`/truyen/${item.id}`)} className="relative">
+                                            <img className="h-[250px] w-full rounded-t-lg" src={getCoverUrl(item)} />
                                             <div className="absolute bottom-0 w-full h-5">
                                                 <span className="w-auto font-medium px-[2px] text-xs font-sans h-full text-white flex items-center bg-black opacity-50 rounded-b-sm">
                                                     <EyeFilled className="mx-2 fill-white" style={{ fontSize: '15px' }} />
-                                                    {item.scored_by || 0}
+                                                    0
                                                     <UsergroupAddOutlined className="mx-2 fill-white" style={{ fontSize: '15px' }} />
-                                                    {item.members || 0}
+                                                    0
                                                 </span>
                                             </div>
                                         </div>
@@ -83,15 +86,15 @@ const CardMain2 = () => {
                                             lineHeight: '16px',
                                         }}
                                         title={
-                                            <Tooltip title={item.title} arrow={false}>
-                                                <a onClick={() => navigate(`/truyen/${item.title}`)} className="h-8 text-wrap line-clamp-2 hover:text-red-700">
-                                                    <span>{item.title}</span>
+                                            <Tooltip title={getTitle(item)} arrow={false}>
+                                                <a onClick={() => navigate(`/truyen/${item.id}`)} className="h-8 text-wrap line-clamp-2 hover:text-red-700">
+                                                    <span>{getTitle(item)}</span>
                                                 </a>
                                             </Tooltip>
                                         } description={
                                             <div className="relative">
                                                 <div className="absolute bg-gray-400 opacity-50 w-[1px] h-full left-[10px] bottom-0"></div>
-                                                {chaptersByMangaId[item.mal_id]?.map((chap) => (
+                                                {chaptersByMangaId[item.id]?.map((chap) => (
                                                     <a key={chap.id} className="text-sm text-gray-500 flex items-center hover:text-red-700 hover:fill-red-700">
                                                         <div className="z-[1]"><CodepenCircleOutlined style={{ fontSize: '20px' }} /></div>
                                                         <div className="flex flex-col pl-3 pb-2">
@@ -116,7 +119,7 @@ const CardMain2 = () => {
                 <div className="flex items-center">
                     <hr className="block flex-1 border border-gray-30 border-opacity-30 border-solid transition max-w-full" />
                     <PaginationManga
-                        totalPages={totalPagesJikan}
+                        totalPages={totalPages}
                         postsPerPage={pageSize}
                         currentPage={currentPage}
                         handlePageChange={handlePageChange}
@@ -130,4 +133,4 @@ const CardMain2 = () => {
     );
 };
 
-export default CardMain2;
+export default CardMainDex;

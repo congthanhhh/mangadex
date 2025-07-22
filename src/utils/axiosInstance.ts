@@ -31,10 +31,20 @@ axiosInstance.interceptors.response.use(
     }
 );
 
-//Jikan API
-export const jikanApi = axios.create({
-    baseURL: 'https://api.jikan.moe/v4',
+//Mangadex API
+export const mangadex = axios.create({
+    baseURL: 'https://api.mangadex.org',
     headers: {
         'Content-Type': 'application/json',
     },
 });
+
+mangadex.interceptors.response.use(
+    (response) => {
+        return response;
+    },
+    (error) => {
+        console.error('MangaDx API Error:', error);
+        return Promise.reject(error);
+    }
+);
