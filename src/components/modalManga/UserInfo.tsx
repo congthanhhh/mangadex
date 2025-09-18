@@ -75,6 +75,7 @@ const UserInfo = (props: ModelInfoProps) => {
                     md: '40%',
                     lg: '30%',
                     xl: '25%',
+                    xxl: '25%',
                 }}
                 title={<div className='text-xl shadow-md p-1'>Thông Tin Tài Khoản</div>}
                 open={isOpenUserInfo} onCancel={handleCancel} footer={null}>                <div className='capitalize'>

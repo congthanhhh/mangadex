@@ -87,6 +87,7 @@ const Login = (props: ModelLoginProps) => {
             md: '35%',
             lg: '30%',
             xl: '20%',
+            xxl: '20%',
         }} open={isOpenLogin} onCancel={handleCancel} footer={null}>
             <div className='px-8'>
                 <div className='mt-5'>

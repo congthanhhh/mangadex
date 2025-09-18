@@ -4,8 +4,6 @@ import mangaReducer from './slice/mangaSlice'
 import chapterReducer from './slice/chapterSlice'
 import pageReducer from './slice/pageSlice'
 import commentReducer from './slice/commentSlice'
-import mangadexReducer from './slice/mangadexSlice'
-import chapterdexReducer from './slice/chapterdexSlice'
 
 export const store = configureStore({
     reducer: {
@@ -14,8 +12,6 @@ export const store = configureStore({
         chapter: chapterReducer,
         page: pageReducer,
         comment: commentReducer,
-        mangadex: mangadexReducer,
-        chapterdex: chapterdexReducer,
     },
 })
 

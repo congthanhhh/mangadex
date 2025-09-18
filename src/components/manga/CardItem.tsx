@@ -1,7 +1,6 @@
 import { Card, Row, Col, Button, Flex, Tag, Tooltip } from 'antd'
 import { EyeOutlined, UsergroupAddOutlined, StarFilled, TagOutlined } from "@ant-design/icons";
-import { Manga } from '../../services/mangaService';
-
+import { Manga } from '../../types';
 
 interface CardItemProps {
     manga: Manga[];
