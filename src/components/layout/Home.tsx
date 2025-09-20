@@ -1,7 +1,8 @@
 import { Layout } from "antd"
 import NavHeader from "./NavHeader"
 import AppRouter from "../Router/AppRouter"
-const { Footer, Content } = Layout
+import Footer from "./Footer"
+const { Content } = Layout
 const Home = () => {
   return (
     <>
@@ -12,7 +13,7 @@ const Home = () => {
             <AppRouter />
           </Content>
         </Layout>
-        <Footer className="bg-white mt-2 h-5 border-t">FOOTER</Footer>
+        <Footer />
       </div>
     </>
   )

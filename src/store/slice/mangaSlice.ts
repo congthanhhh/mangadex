@@ -1,13 +1,15 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { getPaginatedMangaAPI, getMangaByIdAPI, getMangaNewAPI } from '../../services/mangaService';
+import { getPaginatedMangaAPI, getMangaByIdAPI, getMangaNewAPI, getMangaByViewCountAPI } from '../../services/mangaService';
 import { Manga, MangaResponse, MangaSliceState } from '../../types/mangaTypes';
 
 
 const initialState: MangaSliceState = {
     mangaList: [],
     mangaListNew: [],
+    mangaListByViewCount: [],
     selectedManga: null,
     loading: false,
+    loadingViewCount: false,
     loadingMangaDetail: false,
     error: null,
     detailError: null
@@ -37,7 +39,21 @@ export const fetchMangaNew = createAsyncThunk(
         } catch (error) {
             return rejectWithValue('Failed to fetch new manga');
         }
-    });
+    }
+);
+
+export const fetchMangaViewCount = createAsyncThunk(
+    'manga/fetchViewCount',
+    async ({ page, pageSize }: { page: number, pageSize: number }, { rejectWithValue }) => {
+        try {
+            const apiPage = page - 1;
+            const response = await getMangaByViewCountAPI(apiPage, pageSize);
+            return response;
+        } catch (error) {
+            return rejectWithValue('Failed to fetch manga by view count');
+        }
+    }
+);
 
 export const fetchMangaById = createAsyncThunk(
     'manga/fetchById',
@@ -78,6 +94,18 @@ const mangaSlice = createSlice({
             }).addCase(fetchMangaNew.fulfilled, (state, action: PayloadAction<MangaResponse>) => {
                 state.loading = false;
                 state.mangaListNew = action.payload.result.content;
+            })
+            .addCase(fetchMangaViewCount.pending, (state) => {
+                state.loadingViewCount = true;
+                state.error = null;
+            })
+            .addCase(fetchMangaViewCount.fulfilled, (state, action: PayloadAction<MangaResponse>) => {
+                state.loadingViewCount = false;
+                state.mangaListByViewCount = action.payload.result.content;
+            })
+            .addCase(fetchMangaViewCount.rejected, (state, action) => {
+                state.loadingViewCount = false;
+                state.error = action.payload as string;
             });
     }
 });

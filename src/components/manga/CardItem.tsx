@@ -1,6 +1,7 @@
 import { Card, Row, Col, Button, Flex, Tag, Tooltip } from 'antd'
 import { EyeOutlined, UsergroupAddOutlined, StarFilled, TagOutlined } from "@ant-design/icons";
 import { Manga } from '../../types';
+import { useNavigate } from 'react-router-dom';
 
 interface CardItemProps {
     manga: Manga[];
@@ -8,6 +9,7 @@ interface CardItemProps {
 }
 const CardItem = (props: CardItemProps) => {
     const { manga, loading } = props;
+    const navigate = useNavigate();
     return (
         <>
             <Row >
@@ -98,7 +100,7 @@ const CardItem = (props: CardItemProps) => {
                                                 </Tooltip>
                                             </div>
                                             <div className='absolute bottom-2 left-2'>
-                                                <Button href='#' className='font-sans' color='danger' variant='text'>
+                                                <Button onClick={() => navigate(`/truyen/${item.id}`)} className='font-sans' color='danger' variant='text'>
                                                     ĐỌC TRUYỆN
                                                 </Button>
                                             </div>

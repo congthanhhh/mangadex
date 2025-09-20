@@ -2,60 +2,45 @@ import { useEffect, useState } from 'react';
 import PaginationManga from '../pagination/PaginationManga';
 import CardItem from './CardItem';
 import { Button, Tabs } from 'antd';
-interface IManga {
-    title: string;
-    body: string;
-}
+
 import type { TabsProps } from 'antd';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { fetchMangaNew, fetchMangaViewCount } from '../../store/slice/mangaSlice';
 const CardProposal = () => {
-    const [mangaNew, setMangaNew] = useState<IManga[]>([]);
-    const [mangaBest, setMangaBest] = useState<IManga[]>([]);
-    const [totalPagesNew, setTotalPagesNew] = useState(0);
-    const [totalPagesBest, setTotalPagesBest] = useState(0);
-    const [currentPageNew, setCurrentPageNew] = useState(1);
-    const [currentPageBest, setCurrentPageBest] = useState(1);
-    const [loadingNew, setLoadingNew] = useState(false);
-    const [loadingBest, setLoadingBest] = useState(false);
+    const dispatch = useAppDispatch();
+    const [totalPages1, setTotalPages1] = useState(0);
+    const [totalPages2, setTotalPages2] = useState(0);
+    const [currentPage1, setCurrentPage1] = useState(1);
+    const [currentPage2, setCurrentPage2] = useState(1);
     const [activeButton, setActiveButton] = useState(1);
-    const pageSize = 10;
-    const fetchProposalNew = async (page: number, pageSize: number) => {
-        setLoadingNew(true);
-        try {
-            const res = await fetch(`https://jsonplaceholder.typicode.com/posts?_page=${page}&_limit=${pageSize}`);
-            const data = await res.json();
-            const total = res.headers.get("X-Total-Count");
-            setMangaNew(data);
-            setTotalPagesNew(Number(total));
-        } catch (error) {
-            console.error("Error fetching data:", error);
-        } finally {
-            setLoadingNew(false)
-        }
-    }
+    const pageSize = 6;
+    const { mangaListNew, loading, mangaListByViewCount, loadingViewCount } = useAppSelector(state => state.manga);
+
+
+    useEffect(() => {
+        dispatch(fetchMangaNew({ page: currentPage1, pageSize }))
+            .unwrap()
+            .then(response => {
+                setTotalPages1(response.result.totalPages);
+            })
+            .catch(error => {
+                console.error("Error fetching new manga:", error);
+            });
+        dispatch(fetchMangaViewCount({ page: currentPage2, pageSize }))
+            .unwrap()
+            .then(response => {
+                setTotalPages2(response.result.totalPages);
+            })
+            .catch(error => {
+                console.error("Error fetching manga by view count:", error);
+            });
+    }, [currentPage1, currentPage2, dispatch, pageSize])
     const handlePageChangeNew = (page: number) => {
-        setCurrentPageNew(page);
-    }
-    const fetchProposalBest = async (page: number, pageSize: number) => {
-        setLoadingBest(true);
-        try {
-            const res = await fetch(`https://jsonplaceholder.typicode.com/posts?_page=${page}&_limit=${pageSize}`);
-            const data = await res.json();
-            const total = res.headers.get("X-Total-Count");
-            setMangaBest(data);
-            setTotalPagesBest(Number(total));
-        } catch (error) {
-            console.error("Error fetching data:", error);
-        } finally {
-            setLoadingBest(false)
-        }
+        setCurrentPage1(page);
     }
     const handlePageChangeBest = (page: number) => {
-        setCurrentPageBest(page);
+        setCurrentPage2(page);
     }
-    useEffect(() => {
-        fetchProposalNew(currentPageNew, pageSize);
-        fetchProposalBest(currentPageBest, pageSize);
-    }, [currentPageNew, currentPageBest])
 
 
 
@@ -76,15 +61,15 @@ const CardProposal = () => {
             ),
             children: (
                 <>
-                    <CardItem manga={mangaNew} loading={loadingNew} />
+                    <CardItem manga={mangaListByViewCount || []} loading={loadingViewCount} />
                     <div className="my-2 w-full pr-3">
                         <div className="flex items-center">
                             <hr className="block flex-1 border border-gray-30 border-opacity-30 border-solid transition max-w-full" />
                             <PaginationManga
-                                totalPages={totalPagesNew}
+                                totalPages={totalPages2}
                                 postsPerPage={pageSize}
-                                currentPage={currentPageNew}
-                                handlePageChange={handlePageChangeNew}
+                                currentPage={currentPage2}
+                                handlePageChange={handlePageChangeBest}
                             />
                         </div>
                     </div>
@@ -102,15 +87,15 @@ const CardProposal = () => {
             ),
             children: (
                 <>
-                    <CardItem manga={mangaBest} loading={loadingBest} />
+                    <CardItem manga={mangaListNew || []} loading={loading} />
                     <div className="my-2 w-full pr-3">
                         <div className="flex items-center">
                             <hr className="block flex-1 border border-gray-30 border-opacity-30 border-solid transition max-w-full" />
                             <PaginationManga
-                                totalPages={totalPagesBest}
+                                totalPages={totalPages1}
                                 postsPerPage={pageSize}
-                                currentPage={currentPageBest}
-                                handlePageChange={handlePageChangeBest}
+                                currentPage={currentPage1}
+                                handlePageChange={handlePageChangeNew}
                             />
                         </div>
                     </div>

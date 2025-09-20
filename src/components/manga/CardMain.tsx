@@ -15,7 +15,7 @@ import { vi } from 'date-fns/locale';
 
 const CardMain = () => {
     const navigate = useNavigate();
-    const dispatch = useAppDispatch(); const pageSize = 7;
+    const dispatch = useAppDispatch(); const pageSize = 24;
     // Local state for pagination
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPagesMain, setTotalPagesMain] = useState(0);

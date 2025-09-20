@@ -33,8 +33,10 @@ export interface MangaResponse {
 export interface MangaSliceState {
     mangaList: Manga[];
     mangaListNew: Manga[];
+    mangaListByViewCount: Manga[];
     selectedManga: Manga | null;
     loading: boolean;
+    loadingViewCount: boolean;
     loadingMangaDetail: boolean;
     error: string | null;
     detailError: string | null;

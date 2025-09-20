@@ -4,10 +4,9 @@ import PaginationManga from '../pagination/PaginationManga';
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { fetchMangaNew } from "../../store/slice/mangaSlice";
 
-
 const CardNew = () => {
     const dispatch = useAppDispatch()
-    const pageSize = 4;
+    const pageSize = 6;
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPagesNew, setTotalPagesNew] = useState(0);
 
