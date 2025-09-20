@@ -1,6 +1,5 @@
 import { Modal, Input, Row, Col, Tooltip } from "antd";
 import { useState, useCallback } from "react";
-import { assets } from '../../assets/assets';
 import { EyeOutlined } from "@ant-design/icons";
 import { searchMangaAPI } from "../../services/mangaService";
 import { Manga } from "../../types/mangaTypes";
@@ -76,7 +75,7 @@ const Search = (props: ModelSearchProps) => {
                                 <Row key={item.id} className="my-2 cursor-pointer pr-4 hover:shadow-md">
                                     <Col xs={5} sm={5} md={5}>
                                         <a>
-                                            <img src={item.imageUrl || assets.mangaImg} className="h-fit w-full object-cover" alt={item.title} />
+                                            <img src={item.imageUrl} className="h-fit w-full object-cover" alt={item.title} />
                                         </a>
                                     </Col>
                                     <Col xs={19} sm={19} md={19} className="pl-1 capitalize relative">

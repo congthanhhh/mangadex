@@ -24,4 +24,4 @@ dist-ssr
 *.sw?
 
 # my ignore
-src/assets/*
+# src/assets/*
