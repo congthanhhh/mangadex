@@ -1,5 +1,8 @@
-# React + TypeScript + Vite
+# 📖 MangaDex
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+### 🎞️ Demo Gif
+![FlashCard Demo](src/assets/demo.gif)
 
-![Homepage](assets/homepage.jpeg)
+---
+### HomePage
+![Homepage](src/assets/homepage.jpeg)
