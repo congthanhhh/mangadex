@@ -1,5 +1,5 @@
 import { Carousel } from "antd"
-import { assets } from '../../assets/assets'
+
 const CarouselItem = () => {
     return (
         <>
@@ -8,7 +8,7 @@ const CarouselItem = () => {
                     {/* loop o day */}
                     <div className="w-full h-80 bg-[#364d79] rounded">
                         <a href="#">
-                            <img className="h-full w-full object-contain" src={assets.carouselImg} />
+                            <img className="h-full w-full object-contain" src="/src/assets/banner.jpg" />
                         </a>
                     </div>
                 </Carousel>

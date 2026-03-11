@@ -1,8 +1,9 @@
 import axios from 'axios';
 import { getToken } from './tokenUtils';
 
+const baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/comic';
 export const axiosInstance = axios.create({
-    baseURL: 'http://localhost:8080/comic',
+    baseURL,
     headers: {
         'Content-Type': 'application/json',
     },
@@ -31,20 +32,3 @@ axiosInstance.interceptors.response.use(
     }
 );
 
-//Mangadex API
-export const mangadex = axios.create({
-    baseURL: 'https://api.mangadex.org',
-    headers: {
-        'Content-Type': 'application/json',
-    },
-});
-
-mangadex.interceptors.response.use(
-    (response) => {
-        return response;
-    },
-    (error) => {
-        console.error('MangaDx API Error:', error);
-        return Promise.reject(error);
-    }
-);

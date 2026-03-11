@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Card, Col, Row, Tooltip } from "antd";
 import PaginationManga from "../pagination/PaginationManga";
 import { CodepenCircleOutlined, EyeFilled, UsergroupAddOutlined } from "@ant-design/icons";
-import { assets } from '../../assets/assets';
 import CardNew from "./CardNew";
 import CardProposal from "./CardProposal";
 import CarouselItem from "./CarouselItem";
@@ -62,7 +61,7 @@ const CardMain = () => {
                                 <Card loading={loading} hoverable size="small"
                                     cover={
                                         <div onClick={() => navigate(`/truyen/${item.id}`)} className="relative">
-                                            <img className="h-[250px] w-full rounded-t-lg" src={item.imageUrl || assets.mangaImg2} />
+                                            <img className="h-[250px] w-full rounded-t-lg" src={item.imageUrl} />
                                             <div className="absolute bottom-0 w-full h-5">
                                                 <span className="w-auto font-medium px-[2px] text-xs font-sans h-full text-white flex items-center bg-black opacity-50 rounded-b-sm">
                                                     <EyeFilled className="mx-2 fill-white" style={{ fontSize: '15px' }} />
