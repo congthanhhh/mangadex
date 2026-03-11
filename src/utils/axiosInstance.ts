@@ -1,7 +1,13 @@
 import axios from 'axios';
 import { getToken } from './tokenUtils';
 
-const baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/comic';
+// Development: gọi trực tiếp backend qua env hoặc localhost
+// Production (Netlify): dùng proxy /api được cấu hình trong netlify.toml
+const baseURL =
+    import.meta.env.MODE === 'development'
+        ? (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/comic')
+        : '/api';
+
 export const axiosInstance = axios.create({
     baseURL,
     headers: {
