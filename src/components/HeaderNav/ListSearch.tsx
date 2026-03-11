@@ -1,5 +1,3 @@
-import React from 'react'
-
 const ListSearch = () => {
     return (
         <div>ListSearch</div>

@@ -10,7 +10,7 @@ interface ModelSelectChapProps {
 }
 const SelectChapter = (props: ModelSelectChapProps) => {
     const { isOpenChapter, handleCancel } = props;
-    const [search, setSearch] = useState('');
+    const [, setSearch] = useState('');
     const [result, setResult] = useState<IChapter[]>([])
 
     const mangaData = async (value: string) => {
